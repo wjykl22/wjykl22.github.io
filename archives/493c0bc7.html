@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=EB Garamond:300,300italic,400,400italic,700,700italic|Cinzel Decorative:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wjykl22.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="摘要 目前已有类似于QSGD和稀疏化SGD的通信优化算法，但参数服务器在实际应用中在收到工作节点量化梯度并聚合后，需要将聚合梯度从新分发给工作节点。本论文同时对工作节点和参数服务器梯度，采用误差补偿的方式进行梯度压缩。该算法有三大优势：  它兼容众多“粗暴”的压缩技术 它与没有误差补偿的压缩算法（例如QSGD和稀疏化SGD）相比，收敛性更好 达到了线性收敛  12if __name_">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DOUBLESQUEEZE Parallel Stochastic Gradient Descent with Double-pass Error-Compensated Compression">
+<meta property="og:url" content="https://wjykl22.github.io/archives/493c0bc7.html">
+<meta property="og:site_name" content="汝穿如衣">
+<meta property="og:description" content="摘要 目前已有类似于QSGD和稀疏化SGD的通信优化算法，但参数服务器在实际应用中在收到工作节点量化梯度并聚合后，需要将聚合梯度从新分发给工作节点。本论文同时对工作节点和参数服务器梯度，采用误差补偿的方式进行梯度压缩。该算法有三大优势：  它兼容众多“粗暴”的压缩技术 它与没有误差补偿的压缩算法（例如QSGD和稀疏化SGD）相比，收敛性更好 达到了线性收敛  12if __name_">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wjykl22.github.io/archives/493c0bc7/image-20200724191830893.png">
+<meta property="og:image" content="https://wjykl22.github.io/archives/493c0bc7/image-20200724192014337.png">
+<meta property="og:image" content="https://wjykl22.github.io/archives/493c0bc7/image-20200724192043966.png">
+<meta property="og:image" content="https://wjykl22.github.io/archives/493c0bc7/image-20200724192139291.png">
+<meta property="og:image" content="https://wjykl22.github.io/archives/493c0bc7/image-20200724192150444.png">
+<meta property="og:image" content="https://wjykl22.github.io/archives/493c0bc7/image-20200724192202959.png">
+<meta property="article:published_time" content="2020-07-24T12:45:07.000Z">
+<meta property="article:modified_time" content="2020-07-28T00:36:09.122Z">
+<meta property="article:author" content="Jiyang">
+<meta property="article:tag" content="分布式机器学习">
+<meta property="article:tag" content="通信优化">
+<meta property="article:tag" content="梯度压缩">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wjykl22.github.io/archives/493c0bc7/image-20200724191830893.png">
+
+<link rel="canonical" href="https://wjykl22.github.io/archives/493c0bc7.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>DOUBLESQUEEZE Parallel Stochastic Gradient Descent with Double-pass Error-Compensated Compression | 汝穿如衣</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="汝穿如衣" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">汝穿如衣</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">subtitle</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-主页">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>主页</a>
+
+  </li>
+        <li class="menu-item menu-item-关于">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-标签">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-目录">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>目录</a>
+
+  </li>
+        <li class="menu-item menu-item-结构">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>结构</a>
+
+  </li>
+        <li class="menu-item menu-item-站点地图">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-公益">
+
+    <a href="/404.html" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wjykl22.github.io/archives/493c0bc7.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/avatar.jpg">
+      <meta itemprop="name" content="Jiyang">
+      <meta itemprop="description" content="世界上有两样东西不可直视，一是太阳，二是人心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="汝穿如衣">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          DOUBLESQUEEZE Parallel Stochastic Gradient Descent with Double-pass Error-Compensated Compression
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-24 20:45:07" itemprop="dateCreated datePublished" datetime="2020-07-24T20:45:07+08:00">2020-07-24</time>
+            </span>
+            
+                <i class="fa fa-thumb-tack"></i>
+                <font color=7D26CD>置顶</font>
+                <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-28 08:36:09" itemprop="dateModified" datetime="2020-07-28T08:36:09+08:00">2020-07-28</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%A7%91%E7%A0%94/" itemprop="url" rel="index"><span itemprop="name">科研</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">分布式机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/" itemprop="url" rel="index"><span itemprop="name">通信优化</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/%E6%A2%AF%E5%BA%A6%E5%8E%8B%E7%BC%A9/" itemprop="url" rel="index"><span itemprop="name">梯度压缩</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/archives/493c0bc7.html" class="post-meta-item leancloud_visitors" data-flag-title="DOUBLESQUEEZE Parallel Stochastic Gradient Descent with Double-pass Error-Compensated Compression" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/archives/493c0bc7.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/493c0bc7.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>9.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>8 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="摘要">摘要</h2>
+<p>目前已有类似于QSGD和稀疏化SGD的通信优化算法，但参数服务器在实际应用中在收到工作节点量化梯度并聚合后，需要将聚合梯度从新分发给工作节点。本论文同时对工作节点和参数服务器梯度，采用误差补偿的方式进行梯度压缩。该算法有三大优势：</p>
+<ol type="1">
+<li>它兼容众多“粗暴”的压缩技术</li>
+<li>它与没有误差补偿的压缩算法（例如QSGD和稀疏化SGD）相比，收敛性更好</li>
+<li>达到了线性收敛</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    print(<span class="string">"111"</span>)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>dfdfadf</p>
+</blockquote>
+<h2 id="背景介绍">背景介绍</h2>
+<p>提高分布式机器学习性能的三个方向：</p>
+<p>（1）高通信效率的学习</p>
+<ul>
+<li>QSGD: Communication-efficient SGD via gradient quantization and encoding<a href="#refer-anchor-1"><sup>1</sup></a>（量化为三元组表示）</li>
+<li>signSGD: Compressed optimisation for non-convex problems<a href="#refer-anchor-2"><sup>2</sup></a></li>
+<li>1-bit stochastic gradient descent and its application to data-parallel distributed training of speech dnns<a href="#refer-anchor-3"><sup>3</sup></a>（提出一种误差补偿的量化方法）</li>
+</ul>
+<p>（2）去中心化学习；</p>
+<ul>
+<li>He L, Bian A, Jaggi M. Cola: Decentralized linear learning[C]//Advances in Neural Information Processing Systems. 2018: 4536-4546.</li>
+<li>Lian X, Zhang C, Zhang H, et al. Can decentralized algorithms outperform centralized algorithms? a case study for decentralized parallel stochastic gradient descent[C]//Advances in Neural Information Processing Systems. 2017: 5330-5340.</li>
+</ul>
+<p>（3）异步学习</p>
+<ul>
+<li>Agarwal A, Duchi J C. Distributed delayed stochastic optimization[C]//Advances in Neural Information Processing Systems. 2011: 873-881.</li>
+<li>Lian X, Huang Y, Li Y, et al. Asynchronous parallel stochastic gradient for nonconvex optimization[C]//Advances in Neural Information Processing Systems. 2015: 2737-2745.</li>
+<li>Recht B, Re C, Wright S, et al. Hogwild: A lock-free approach to parallelizing stochastic gradient descent[C]//Advances in neural information processing systems. 2011: 693-701.</li>
+</ul>
+<h3 id="量化压缩基本模型">量化压缩基本模型</h3>
+<p>作者对分布式机器学习（特别是参数服务器架构）和量化压缩数学模型简单做了介绍</p>
+<h4 id="分布式机器学习基本模型">分布式机器学习基本模型</h4>
+<p><span class="math display">\[
+\min _{\boldsymbol{x}} f(\boldsymbol{x})=\frac{1}{n} \sum_{i=1}^{n} \mathbb{E}_{\boldsymbol{\zeta} \sim \mathcal{D}_{i}} F(\boldsymbol{x} ; \boldsymbol{\zeta})
+\]</span></p>
+<p>其中<span class="math inline">\(n\)</span>表示工作节点数量，<span class="math inline">\(\mathcal{D}_{i}\)</span>本地节点<span class="math inline">\(i\)</span>的数据分布，<span class="math inline">\(F(\boldsymbol{x} ; \boldsymbol{\zeta})\)</span>为本地损失函数。 <span class="math display">\[
+\boldsymbol{g}^{(i)}=\nabla F\left(\boldsymbol{x} ; \boldsymbol{\zeta}^{(i)}\right)
+\]</span> 各工作节点计算梯度 <span class="math display">\[
+\boldsymbol{g}=\frac{1}{n} \sum_{i=1}^{n} \boldsymbol{g}^{(i)}
+\]</span> 参数服务器对梯度进行聚合，以上是对分布式SGD算法的简单建模</p>
+<h4 id="量化压缩">量化压缩</h4>
+<p><span class="math inline">\(Q_{\omega}[\cdot]\)</span>代表压缩操作，以<span class="math inline">\(1Bits\)</span>方法为例，利用递归的方法更新压缩误差： <span class="math display">\[
+\boldsymbol{\delta}^{(i)}=\boldsymbol{g}^{(i)}+\boldsymbol{\delta}^{(i)}-Q_{\omega}\left[\boldsymbol{g}^{(i)}+\boldsymbol{\delta}^{(i)}\right]
+\]</span> 其中<span class="math inline">\(\left[\boldsymbol{g}^{(i)}+\boldsymbol{\delta}^{(i)}\right]\)</span>表示本轮计算得到的梯度<span class="math inline">\(g^{(i)}\)</span>和上一轮压缩误差<span class="math inline">\(\boldsymbol{\delta}^{(i)}\)</span>的和，上式子是对本轮量化误差的重新计算，这也是误差补偿的由来。</p>
+<h4 id="主要贡献">主要贡献</h4>
+<ol type="1">
+<li>比其他没有错误补偿的压缩方法具有更好的收敛性</li>
+<li>进一步优化了通信效率</li>
+<li>第一次给出了误差补偿SGD相关算法的速率分析</li>
+<li>在非凸情况下的加速证明</li>
+</ol>
+<h2 id="相关工作">相关工作</h2>
+<h4 id="分布式学习">分布式学习</h4>
+<h5 id="中心化并行训练">中心化并行训练</h5>
+<h6 id="参数服务器架构">参数服务器架构</h6>
+<ol type="1">
+<li>Abadi M, Barham P, Chen J, et al. Tensorflow: A system for large-scale machine learning[C]//12th {USENIX} symposium on operating systems design and implementation ({OSDI} 16). 2016: 265-283.</li>
+<li>Li M, Andersen D G, Park J W, et al. Scaling distributed machine learning with the parameter server[C]//11th {USENIX} Symposium on Operating Systems Design and Implementation ({OSDI} 14). 2014: 583-598.</li>
+</ol>
+<h6 id="去中心化训练">去中心化训练</h6>
+<ol type="1">
+<li>固定拓扑
+<ul>
+<li>Jin P H, Yuan Q, Iandola F, et al. How to scale distributed deep learning?[J]. arXiv preprint arXiv:1611.04581, 2016.</li>
+<li>Lian X, Zhang C, Zhang H, et al. Can decentralized algorithms outperform centralized algorithms? a case study for decentralized parallel stochastic gradient descent[C]//Advances in Neural Information Processing Systems. 2017: 5330-5340.</li>
+<li>Shen Z, Mokhtari A, Zhou T, et al. Towards more efficient stochastic decentralized learning: Faster convergence and sparse communication[J]. arXiv preprint arXiv:1805.09969, 2018.</li>
+<li>Tang H, Lian X, Yan M, et al. D <span class="math inline">\(^ 2\)</span>: Decentralized Training over Decentralized Data[J]. arXiv preprint arXiv:1803.07068, 2018.</li>
+</ul></li>
+<li>随机拓扑
+<ul>
+<li>Lian X, Zhang W, Zhang C, et al. Asynchronous decentralized parallel stochastic gradient descent[C]//International Conference on Machine Learning. 2018: 3043-3052.</li>
+<li>Nedić A, Olshevsky A. Distributed optimization over time-varying directed graphs[J]. IEEE Transactions on Automatic Control, 2014, 60(3): 601-615.</li>
+<li>Nedic A, Olshevsky A, Shi W. Achieving geometric convergence for distributed optimization over time-varying graphs[J]. SIAM Journal on Optimization, 2017, 27(4): 2597-2633.</li>
+</ul></li>
+</ol>
+<h6 id="不同角度实现分布式训练">不同角度实现分布式训练</h6>
+<ol type="1">
+<li>隐私分布式优化
+<ul>
+<li>Jayaraman B, Wang L, Evans D, et al. Distributed learning without distress: Privacy-preserving empirical risk minimization[C]//Advances in Neural Information Processing Systems. 2018: 6343-6354.</li>
+</ul></li>
+<li>自适应分布式ADMM
+<ul>
+<li>Xu Z, Taylor G, Li H, et al. Adaptive consensus ADMM for distributed optimization[J]. arXiv preprint arXiv:1706.02869, 2017.</li>
+</ul></li>
+<li>非平滑分布式优化
+<ul>
+<li>Scaman K, Bach F, Bubeck S, et al. Optimal algorithms for non-smooth distributed optimization in networks[C]//Advances in Neural Information Processing Systems. 2018: 2740-2749.</li>
+</ul></li>
+<li>分布式近端原对称对偶算法
+<ul>
+<li>Hong M, Hajinezhad D, Zhao M M. Prox-PDA: The proximal primal-dual algorithm for fast distributed nonconvex optimization and learning over networks[C]//International Conference on Machine Learning. 2017: 1529-1538.</li>
+</ul></li>
+<li>投影-free的分布式在线学习
+<ul>
+<li>Zhang W, Zhao P, Zhu W, et al. Projection-free distributed online learning in networks[C]//International Conference on Machine Learning. 2017: 4054-4062.</li>
+</ul></li>
+<li>平行倒推
+<ul>
+<li>Huo Z, Gu B, Yang Q, et al. Decoupled parallel backpropagation with convergence guarantee[J]. arXiv preprint arXiv:1804.10574, 2018.</li>
+</ul></li>
+</ol>
+<h5 id="压缩通信学习">压缩通信学习</h5>
+<ol type="1">
+<li><p>稀疏化模型</p>
+<ul>
+<li>Wang J, Kolar M, Srebro N, et al. Efficient distributed learning with sparsity[C]//International Conference on Machine Learning. 2017: 3636-3645.</li>
+</ul></li>
+<li><p>梯度量化</p>
+<ul>
+<li>Shen Z, Mokhtari A, Zhou T, et al. Towards more efficient stochastic decentralized learning: Faster convergence and sparse communication[J]. arXiv preprint arXiv:1805.09969, 2018.</li>
+</ul>
+<p>QSGD</p>
+<ul>
+<li>Alistarh D, Grubic D, Li J, et al. QSGD: Communication-efficient SGD via gradient quantization and encoding[C]//Advances in Neural Information Processing Systems. 2017: 1709-1720.</li>
+</ul>
+<p>PCA压缩</p>
+<ul>
+<li>Garber D, Shamir O, Srebro N. Communication-efficient algorithms for distributed stochastic principal component analysis[J]. arXiv preprint arXiv:1702.08169, 2017.</li>
+</ul>
+<p><span class="math inline">\(1Bits\)</span>量化</p>
+<ul>
+<li>Seide F, Fu H, Droppo J, et al. 1-bit stochastic gradient descent and its application to data-parallel distributed training of speech dnns[C]//Fifteenth Annual Conference of the International Speech Communication Association. 2014.</li>
+<li>Wen W, Xu C, Yan F, et al. Terngrad: Ternary gradients to reduce communication in distributed deep learning[C]//Advances in neural information processing systems. 2017: 1509-1519.</li>
+</ul></li>
+</ol>
+<h5 id="错误补偿压缩">错误补偿压缩</h5>
+<h6 id="bits量化"><span class="math inline">\(1Bits\)</span>量化</h6>
+<ul>
+<li>Seide F, Fu H, Droppo J, et al. 1-bit stochastic gradient descent and its application to data-parallel distributed training of speech dnns[C]//Fifteenth Annual Conference of the International Speech Communication Association. 2014.</li>
+</ul>
+<h6 id="二次优化">二次优化</h6>
+<ul>
+<li>Wu J, Huang W, Huang J, et al. Error compensated quantized SGD and its applications to large-scale distributed optimization[J]. arXiv preprint arXiv:1806.08054, 2018.</li>
+</ul>
+<h6 id="signsgd">SignSGD</h6>
+<ul>
+<li>Bernstein J, Wang Y X, Azizzadenesheli K, et al. signSGD: Compressed optimisation for non-convex problems[J]. arXiv preprint arXiv:1802.04434, 2018.</li>
+<li>Alistarh D, Hoefler T, Johansson M, et al. The convergence of sparsified gradient methods[C]//Advances in Neural Information Processing Systems. 2018: 5973-5983.</li>
+</ul>
+<h2 id="算法介绍">算法介绍</h2>
+<h3 id="算法描述">算法描述</h3>
+<p>本文采用参数服务器架构描述该算法，但是算法的应用场景不仅限于参数服务器架构，在第<span class="math inline">\(t\)</span>次迭代，我们将该算法的关键步骤描述如下：</p>
+<ul>
+<li><strong>工作节点计算</strong></li>
+</ul>
+<p>每个节点<span class="math inline">\(i\)</span>计算本地随机梯度<span class="math inline">\(\nabla F\left(\boldsymbol{x}_{t} ; \boldsymbol{\zeta}_{t}^{(i)}\right)\)</span>，该梯度基于全局模型<span class="math inline">\(x_t\)</span>以及本地样本<span class="math inline">\(\boldsymbol{\zeta}_{t}^{(i)}\)</span>。这里的<span class="math inline">\(i\)</span>代表工作节点<span class="math inline">\(i\)</span>的索引，<span class="math inline">\(t\)</span>表示本轮的迭代次数</p>
+<ul>
+<li><strong>工作节点压缩</strong></li>
+</ul>
+<p>每个工作节点<span class="math inline">\(i\)</span>计算误差补偿随机梯度 <span class="math display">\[
+\boldsymbol{\delta}_{t}^{(i)}=\boldsymbol{v}_{t}^{(i)}-Q_{\omega_{t}^{(i)}}\left[\boldsymbol{v}_{t}^{(i)}\right]
+\]</span> 其中<span class="math inline">\(Q_{\omega_{t}^{(i)}}\left[\boldsymbol{v}_{t}^{(i)}\right]\)</span>表示压缩误差补偿随机梯度</p>
+<ul>
+<li><strong>参数服务器压缩</strong></li>
+</ul>
+<p>所有节点将计算所得的<span class="math inline">\(Q_{\omega_{t}^{(i)}}\left[\boldsymbol{v}_{t}^{(i)}\right]\)</span>量化梯度发送给参数服务器，参数服务器聚合所有量化梯度<span class="math inline">\(Q_{\omega_{t}^{(i)}}\left[\boldsymbol{v}_{t}^{(i)}\right]\)</span>，并且更新全局误差补偿随机梯度<span class="math inline">\(v_t\)</span>，根据以下式子对梯度误差<span class="math inline">\(\boldsymbol{\delta}_{t}\)</span>进行更新 <span class="math display">\[
+\begin{array}{l}
+\boldsymbol{v}_{t}=\boldsymbol{\delta}_{t-1}+\frac{1}{n} \sum_{i=1}^{n} Q_{\omega_{t}^{(i)}}\left[\boldsymbol{v}_{t}^{(i)}\right] \\
+\boldsymbol{\delta}_{t}=\boldsymbol{v}_{t}-Q_{\omega_{t}}\left[\boldsymbol{v}_{t}\right]
+\end{array}
+\]</span></p>
+<ul>
+<li><strong>工作节点更新</strong></li>
+</ul>
+<p>参数服务器将<span class="math inline">\(Q_{\omega_{t}^{(i)}}\left[\boldsymbol{v}_{t}^{(i)}\right]\)</span>发送给所有工作节点，所有工作节点更新本地模型： <span class="math display">\[
+\boldsymbol{x}_{t+1}=\boldsymbol{x}_{t}-\gamma Q_{\omega_{t}}\left[\boldsymbol{v}_{t}\right]
+\]</span> 其中<span class="math inline">\(\gamma\)</span>表示学习率</p>
+<h3 id="压缩选择">压缩选择</h3>
+<p>该方法不像当前存在的方法，并不需要无偏压缩的限制（也就是<span class="math inline">\(\mathbb{E}_{\omega} Q_{\omega}[\boldsymbol{x}]=\boldsymbol{x}\)</span>）。所以选择压缩的方法是非常灵活的。论文例举了多种较为常用的压缩选项：</p>
+<h4 id="随机量化">随机量化</h4>
+<p>对于任意真实值<span class="math inline">\(z \in[a, b]\)</span>，其中<span class="math inline">\((a,b)\)</span>是定义好的低bit数值，<span class="math inline">\(z\)</span>会有<span class="math inline">\(\frac{b-z}{b-a}\)</span>的概率被压缩到<span class="math inline">\(a\)</span>,有<span class="math inline">\(\frac{z-a}{b-a}\)</span>的概率压缩到<span class="math inline">\(b\)</span>。这种压缩操作是无偏的。</p>
+<h4 id="bits量化-1"><span class="math inline">\(1Bits\)</span>量化</h4>
+<p>将<span class="math inline">\(x\)</span>向量压缩到<span class="math inline">\(\|x\| \operatorname{sign}(x)\)</span>，其中<span class="math inline">\(sign(x)\)</span>是其中<span class="math inline">\(x\)</span>向量对应元素的符号。这种压缩是有偏的</p>
+<h4 id="clipping">Clipping</h4>
+<p>对于真实值<span class="math inline">\(z\)</span>，直接设置低于<span class="math inline">\(k\)</span>bis的部分压缩到<span class="math inline">\(0\)</span>。例如，将<span class="math inline">\(1.23456\)</span>压缩为d<span class="math inline">\(1.2\)</span>，直接将其较低的四位变成<span class="math inline">\(0\)</span>。这种压缩是有偏的。</p>
+<h4 id="top-k稀疏化">Top-k稀疏化</h4>
+<p>对于向量<span class="math inline">\(x\)</span>，将其最大的<span class="math inline">\(k\)</span>个元素进行保留，其余的设置为<span class="math inline">\(0\)</span>。这种操作是有偏的。</p>
+<h4 id="随机稀疏化">随机稀疏化</h4>
+<p>对于真实值<span class="math inline">\(z\)</span>，有<span class="math inline">\(p\)</span>的概率将<span class="math inline">\(z\)</span>设置为<span class="math inline">\(0\)</span>，以及<span class="math inline">\(p\)</span>的概率设置为<span class="math inline">\(z/p\)</span>。这样的方法是无偏的</p>
+<h2 id="数学证明和收敛性分析">数学证明和收敛性分析</h2>
+<p>待补充...</p>
+<h2 id="实验">实验</h2>
+<h3 id="实验设置">实验设置</h3>
+<h4 id="数据集和模型">数据集和模型</h4>
+<ul>
+<li>ResNet-18以及CIFAR-10</li>
+</ul>
+<h4 id="实现对照组">实现对照组</h4>
+<h5 id="doublesqueeze">DOUBLESQUEEZE</h5>
+<h6 id="bit压缩"><span class="math inline">\(1-bit\)</span>压缩</h6>
+<p>将梯度压缩到<span class="math inline">\(1-bit\)</span>，只包含符号。基于向量考虑，它的比例因子表示为： <span class="math display">\[
+\frac{\text { magnitude of compensated gradient }}{\text { magnitude of quantized gradient }}
+\]</span></p>
+<h6 id="top-k压缩">Top-k压缩</h6>
+<h5 id="qsgd">QSGD</h5>
+<p>工作节点将梯度压缩成三元表示，其中每个元素用<span class="math inline">\(\{-1,0,1\}\)</span>表示。假设在这个梯度向量各个元素中的最大绝对值为<span class="math inline">\(m\)</span>，对于任意一个元素<span class="math inline">\(e\)</span>，它都以<span class="math inline">\(|e| /|m|\)</span>的可能性压缩到<span class="math inline">\(sign(e)\)</span>，以<span class="math inline">\(1-|e| /|m|\)</span>的可能性压缩到<span class="math inline">\(0\)</span>。扩展因子可以记为： <span class="math display">\[
+\frac{\text { magnitude of compensated gradient }}{\text { magnitude of quantized gradient }}
+\]</span> 采用这种方法时，参数服务器将梯度分发的时候不会讲梯度再次压缩</p>
+<h5 id="vanilla-sgd">Vanilla SGD</h5>
+<p>并不采用任何压缩处理</p>
+<h5 id="mem-sgd">MEM-SGD</h5>
+<p>和DEOUBLESQUEEZE的区别是从参数服务器进行分发的梯度不进行压缩，对于此种方法，本文也去使用了<span class="math inline">\(1-bit\)</span>二和<span class="math inline">\(top-k\)</span>这两中压缩方法。</p>
+<h5 id="top-k-sgd">Top-k SGD</h5>
+<p>该方法不涉及误差补偿机制</p>
+<h3 id="实验结果">实验结果</h3>
+<ol type="1">
+<li>将<span class="math inline">\(1-bit\)</span>压缩作为DEUBLESQUEEZE的压缩方法，与MEM-SGD, QSGD这些压缩方法做对比</li>
+</ol>
+<p><img src="/archives/493c0bc7/image-20200724191830893.png" alt="image-20200724191830893" style="zoom:67%;"></p>
+<p><img src="/archives/493c0bc7/image-20200724192014337.png" alt="image-20200724192014337" style="zoom:67%;"></p>
+<p><img src="/archives/493c0bc7/image-20200724192043966.png" alt="image-20200724192043966" style="zoom:67%;"></p>
+<ol start="2" type="1">
+<li>将Top-k压缩作为DEUBLESQUEEZE的压缩方法，与MEM-SGD, QSGD这些压缩方法做对比</li>
+</ol>
+<p><img src="/archives/493c0bc7/image-20200724192139291.png" alt="image-20200724192139291" style="zoom: 67%;"></p>
+<p><img src="/archives/493c0bc7/image-20200724192150444.png" alt="image-20200724192150444" style="zoom: 67%;"></p>
+<p><img src="/archives/493c0bc7/image-20200724192202959.png" alt="image-20200724192202959" style="zoom: 67%;"></p>
+<div id="refer-anchor-1">
+
+</div>
+<ul>
+<li>[1] <a href="http://papers.nips.cc/paper/6768-qsgd-communication-efficient-sgd-via-gradient-quantization-and-encoding.pdf" target="_blank" rel="noopener external nofollow noreferrer">Alistarh D, Grubic D, Li J, et al. QSGD: Communication-efficient SGD via gradient quantization and encoding[C]//Advances in Neural Information Processing Systems. 2017: 1709-1720.</a>
+<div id="refer-anchor-2">
+
+</div></li>
+<li>[2] <a href="https://arxiv.org/pdf/1802.04434.pdf" target="_blank" rel="noopener external nofollow noreferrer">Bernstein J, Wang Y X, Azizzadenesheli K, et al. signSGD: Compressed Optimisation for Non-Convex Problems[C]//International Conference on Machine Learning. 2018: 560-569.</a>
+<div id="refer-anchor-3">
+
+</div></li>
+<li>[3] <a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/IS140694.pdf" target="_blank" rel="noopener external nofollow noreferrer">Seide F, Fu H, Droppo J, et al. 1-bit stochastic gradient descent and its application to data-parallel distributed training of speech dnns[C]//Fifteenth Annual Conference of the International Speech Communication Association. 2014.</a>
+<div id="refer-anchor-4">
+
+</div>
+<div id="refer-anchor-5">
+
+</div>
+<div id="refer-anchor-6">
+
+</div>
+<div id="refer-anchor-7">
+
+</div>
+<div id="refer-anchor-8">
+
+</div>
+<div id="refer-anchor-9">
+
+</div></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+      
+
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/img/wechatpay.jpg" alt="Jiyang 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/img/alipay.jpg" alt="Jiyang 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Jiyang
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://wjykl22.github.io/archives/493c0bc7.html" title="DOUBLESQUEEZE Parallel Stochastic Gradient Descent with Double-pass Error-Compensated Compression">https://wjykl22.github.io/archives/493c0bc7.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener external nofollow noreferrer" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"># 分布式机器学习</a>
+              <a href="/tags/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/" rel="tag"># 通信优化</a>
+              <a href="/tags/%E6%A2%AF%E5%BA%A6%E5%8E%8B%E7%BC%A9/" rel="tag"># 梯度压缩</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/d87f7e0c.html" rel="prev" title="test">
+      <i class="fa fa-chevron-left"></i> test
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/4a17b156.html" rel="next" title="Hello World">
+      Hello World <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#摘要"><span class="nav-number">1.</span> <span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#背景介绍"><span class="nav-number">2.</span> <span class="nav-text">背景介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#量化压缩基本模型"><span class="nav-number">2.1.</span> <span class="nav-text">量化压缩基本模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#分布式机器学习基本模型"><span class="nav-number">2.1.1.</span> <span class="nav-text">分布式机器学习基本模型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#量化压缩"><span class="nav-number">2.1.2.</span> <span class="nav-text">量化压缩</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#主要贡献"><span class="nav-number">2.1.3.</span> <span class="nav-text">主要贡献</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相关工作"><span class="nav-number">3.</span> <span class="nav-text">相关工作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#分布式学习"><span class="nav-number">3.0.1.</span> <span class="nav-text">分布式学习</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#中心化并行训练"><span class="nav-number">3.0.1.1.</span> <span class="nav-text">中心化并行训练</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#参数服务器架构"><span class="nav-number">3.0.1.1.1.</span> <span class="nav-text">参数服务器架构</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#去中心化训练"><span class="nav-number">3.0.1.1.2.</span> <span class="nav-text">去中心化训练</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#不同角度实现分布式训练"><span class="nav-number">3.0.1.1.3.</span> <span class="nav-text">不同角度实现分布式训练</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#压缩通信学习"><span class="nav-number">3.0.1.2.</span> <span class="nav-text">压缩通信学习</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#错误补偿压缩"><span class="nav-number">3.0.1.3.</span> <span class="nav-text">错误补偿压缩</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#bits量化"><span class="nav-number">3.0.1.3.1.</span> <span class="nav-text">\(1Bits\)量化</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#二次优化"><span class="nav-number">3.0.1.3.2.</span> <span class="nav-text">二次优化</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#signsgd"><span class="nav-number">3.0.1.3.3.</span> <span class="nav-text">SignSGD</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#算法介绍"><span class="nav-number">4.</span> <span class="nav-text">算法介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#算法描述"><span class="nav-number">4.1.</span> <span class="nav-text">算法描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#压缩选择"><span class="nav-number">4.2.</span> <span class="nav-text">压缩选择</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#随机量化"><span class="nav-number">4.2.1.</span> <span class="nav-text">随机量化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#bits量化-1"><span class="nav-number">4.2.2.</span> <span class="nav-text">\(1Bits\)量化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#clipping"><span class="nav-number">4.2.3.</span> <span class="nav-text">Clipping</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#top-k稀疏化"><span class="nav-number">4.2.4.</span> <span class="nav-text">Top-k稀疏化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#随机稀疏化"><span class="nav-number">4.2.5.</span> <span class="nav-text">随机稀疏化</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数学证明和收敛性分析"><span class="nav-number">5.</span> <span class="nav-text">数学证明和收敛性分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实验"><span class="nav-number">6.</span> <span class="nav-text">实验</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实验设置"><span class="nav-number">6.1.</span> <span class="nav-text">实验设置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#数据集和模型"><span class="nav-number">6.1.1.</span> <span class="nav-text">数据集和模型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实现对照组"><span class="nav-number">6.1.2.</span> <span class="nav-text">实现对照组</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#doublesqueeze"><span class="nav-number">6.1.2.1.</span> <span class="nav-text">DOUBLESQUEEZE</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#bit压缩"><span class="nav-number">6.1.2.1.1.</span> <span class="nav-text">\(1-bit\)压缩</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#top-k压缩"><span class="nav-number">6.1.2.1.2.</span> <span class="nav-text">Top-k压缩</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#qsgd"><span class="nav-number">6.1.2.2.</span> <span class="nav-text">QSGD</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#vanilla-sgd"><span class="nav-number">6.1.2.3.</span> <span class="nav-text">Vanilla SGD</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#mem-sgd"><span class="nav-number">6.1.2.4.</span> <span class="nav-text">MEM-SGD</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#top-k-sgd"><span class="nav-number">6.1.2.5.</span> <span class="nav-text">Top-k SGD</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实验结果"><span class="nav-number">6.2.</span> <span class="nav-text">实验结果</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jiyang"
+      src="/img/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Jiyang</p>
+  <div class="site-description" itemprop="description">世界上有两样东西不可直视，一是太阳，二是人心</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/wjykl22" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;wjykl22" rel="noopener external nofollow noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:wjykl22@gmail.com" title="E-Mail → mailto:wjykl22@gmail.com" rel="noopener external nofollow noreferrer" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+    <div class="links-of-blogroll motion-element links-of-blogroll-block">
+      <div class="links-of-blogroll-title">
+        <!-- modify icon to fire by szw -->
+        <i class="fa fa-history fa-" aria-hidden="true"></i>
+        近期文章
+      </div>
+      <ul class="links-of-blogroll-list">
+        
+        
+          <li>
+            <a href="/archives/487a2936.html" title="粉笔公考-判断推理-图形推理" target="_blank">粉笔公考-判断推理-图形推理</a>
+          </li>
+        
+          <li>
+            <a href="/archives/fbb6b1b9.html" title="Kong和Keycloak第三方认证和权限管理" target="_blank">Kong和Keycloak第三方认证和权限管理</a>
+          </li>
+        
+          <li>
+            <a href="/archives/4a17b156.html" title="Hello World" target="_blank">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/archives/493c0bc7.html" title="DOUBLESQUEEZE Parallel Stochastic Gradient Descent with Double-pass Error-Compensated Compression" target="_blank">DOUBLESQUEEZE Parallel Stochastic Gradient Descent with Double-pass Error-Compensated Compression</a>
+          </li>
+        
+          <li>
+            <a href="/archives/d87f7e0c.html" title="test" target="_blank">test</a>
+          </li>
+        
+      </ul>
+    </div>
+
+
+      </div>
+      <div style="">
+  <canvas id="canvas" style="width:60%;">当前浏览器不支持canvas，请更换浏览器后再试</canvas>
+</div>
+<script>
+(function(){
+
+   var digit=
+    [
+        [
+            [0,0,1,1,1,0,0],
+            [0,1,1,0,1,1,0],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [0,1,1,0,1,1,0],
+            [0,0,1,1,1,0,0]
+        ],//0
+        [
+            [0,0,0,1,1,0,0],
+            [0,1,1,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [1,1,1,1,1,1,1]
+        ],//1
+        [
+            [0,1,1,1,1,1,0],
+            [1,1,0,0,0,1,1],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,1,1,0],
+            [0,0,0,1,1,0,0],
+            [0,0,1,1,0,0,0],
+            [0,1,1,0,0,0,0],
+            [1,1,0,0,0,0,0],
+            [1,1,0,0,0,1,1],
+            [1,1,1,1,1,1,1]
+        ],//2
+        [
+            [1,1,1,1,1,1,1],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,1,1,0],
+            [0,0,0,1,1,0,0],
+            [0,0,1,1,1,0,0],
+            [0,0,0,0,1,1,0],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [0,1,1,1,1,1,0]
+        ],//3
+        [
+            [0,0,0,0,1,1,0],
+            [0,0,0,1,1,1,0],
+            [0,0,1,1,1,1,0],
+            [0,1,1,0,1,1,0],
+            [1,1,0,0,1,1,0],
+            [1,1,1,1,1,1,1],
+            [0,0,0,0,1,1,0],
+            [0,0,0,0,1,1,0],
+            [0,0,0,0,1,1,0],
+            [0,0,0,1,1,1,1]
+        ],//4
+        [
+            [1,1,1,1,1,1,1],
+            [1,1,0,0,0,0,0],
+            [1,1,0,0,0,0,0],
+            [1,1,1,1,1,1,0],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [0,1,1,1,1,1,0]
+        ],//5
+        [
+            [0,0,0,0,1,1,0],
+            [0,0,1,1,0,0,0],
+            [0,1,1,0,0,0,0],
+            [1,1,0,0,0,0,0],
+            [1,1,0,1,1,1,0],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [0,1,1,1,1,1,0]
+        ],//6
+        [
+            [1,1,1,1,1,1,1],
+            [1,1,0,0,0,1,1],
+            [0,0,0,0,1,1,0],
+            [0,0,0,0,1,1,0],
+            [0,0,0,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [0,0,1,1,0,0,0],
+            [0,0,1,1,0,0,0],
+            [0,0,1,1,0,0,0],
+            [0,0,1,1,0,0,0]
+        ],//7
+        [
+            [0,1,1,1,1,1,0],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [0,1,1,1,1,1,0],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [0,1,1,1,1,1,0]
+        ],//8
+        [
+            [0,1,1,1,1,1,0],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [0,1,1,1,0,1,1],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,1,1,0],
+            [0,0,0,1,1,0,0],
+            [0,1,1,0,0,0,0]
+        ],//9
+        [
+            [0,0,0,0,0,0,0],
+            [0,0,1,1,1,0,0],
+            [0,0,1,1,1,0,0],
+            [0,0,1,1,1,0,0],
+            [0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0],
+            [0,0,1,1,1,0,0],
+            [0,0,1,1,1,0,0],
+            [0,0,1,1,1,0,0],
+            [0,0,0,0,0,0,0]
+        ]//:
+    ];
+
+var canvas = document.getElementById('canvas');
+
+if(canvas.getContext){
+    var cxt = canvas.getContext('2d');
+    //声明canvas的宽高
+    var H = 100,W = 700;
+    canvas.height = H;
+    canvas.width = W;
+    cxt.fillStyle = '#f00';
+    cxt.fillRect(10,10,50,50);
+
+    //存储时间数据
+    var data = [];
+    //存储运动的小球
+    var balls = [];
+    //设置粒子半径
+    var R = canvas.height/20-1;
+    (function(){
+        var temp = /(\d)(\d):(\d)(\d):(\d)(\d)/.exec(new Date());
+        //存储时间数字，由十位小时、个位小时、冒号、十位分钟、个位分钟、冒号、十位秒钟、个位秒钟这7个数字组成
+        data.push(temp[1],temp[2],10,temp[3],temp[4],10,temp[5],temp[6]);
+    })();
+
+    /*生成点阵数字*/
+    function renderDigit(index,num){
+        for(var i = 0; i < digit[num].length; i++){
+            for(var j = 0; j < digit[num][i].length; j++){
+                if(digit[num][i][j] == 1){
+                    cxt.beginPath();
+                    cxt.arc(14*(R+2)*index + j*2*(R+1)+(R+1),i*2*(R+1)+(R+1),R,0,2*Math.PI);
+                    cxt.closePath();
+                    cxt.fill();
+                }
+            }
+        }
+    }
+
+    /*更新时钟*/
+    function updateDigitTime(){
+        var changeNumArray = [];
+        var temp = /(\d)(\d):(\d)(\d):(\d)(\d)/.exec(new Date());
+        var NewData = [];
+        NewData.push(temp[1],temp[2],10,temp[3],temp[4],10,temp[5],temp[6]);
+        for(var i = data.length-1; i >=0 ; i--){
+            //时间发生变化
+            if(NewData[i] !== data[i]){
+                //将变化的数字值和在data数组中的索引存储在changeNumArray数组中
+                changeNumArray.push(i+'_'+(Number(data[i])+1)%10);
+            }
+        }
+        //增加小球
+        for(var i = 0; i< changeNumArray.length; i++){
+            addBalls.apply(this,changeNumArray[i].split('_'));
+        }
+        data = NewData.concat();
+    }
+
+    /*更新小球状态*/
+    function updateBalls(){
+        for(var i = 0; i < balls.length; i++){
+            balls[i].stepY += balls[i].disY;
+            balls[i].x += balls[i].stepX;
+            balls[i].y += balls[i].stepY;
+            if(balls[i].x > W + R || balls[i].y > H + R){
+                balls.splice(i,1);
+                i--;
+            }
+        }
+    }
+
+    /*增加要运动的小球*/
+    function addBalls(index,num){
+        var numArray = [1,2,3];
+        var colorArray =  ["#3BE","#09C","#A6C","#93C","#9C0","#690","#FB3","#F80","#F44","#C00"];
+        for(var i = 0; i < digit[num].length; i++){
+            for(var j = 0; j < digit[num][i].length; j++){
+                if(digit[num][i][j] == 1){
+                    var ball = {
+                        x:14*(R+2)*index + j*2*(R+1)+(R+1),
+                        y:i*2*(R+1)+(R+1),
+                        stepX:Math.floor(Math.random() * 4 -2),
+                        stepY:-2*numArray[Math.floor(Math.random()*numArray.length)],
+                        color:colorArray[Math.floor(Math.random()*colorArray.length)],
+                        disY:1
+                    };
+                    balls.push(ball);
+                }
+            }
+        }
+    }
+
+    /*渲染*/
+    function render(){
+        //重置画布宽度，达到清空画布的效果
+        canvas.height = 100;
+        //渲染时钟
+        for(var i = 0; i < data.length; i++){
+            renderDigit(i,data[i]);
+        }
+        //渲染小球
+        for(var i = 0; i < balls.length; i++){
+            cxt.beginPath();
+            cxt.arc(balls[i].x,balls[i].y,R,0,2*Math.PI);
+            cxt.fillStyle = balls[i].color;
+            cxt.closePath();
+            cxt.fill();
+        }
+    }
+
+    clearInterval(oTimer);
+    var oTimer = setInterval(function(){
+        //更新时钟
+        updateDigitTime();
+        //更新小球状态
+        updateBalls();
+        //渲染
+        render();
+    },50);
+}
+
+})();
+</script>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-eye"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jiyang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">19k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">17 分钟</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener external nofollow noreferrer" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'owd5pfJvVjoBkwE0F3w7Oqc5-gzGzoHsz',
+      appKey     : 'pQbK5JId2AmEfxG3oSiFXAFP',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

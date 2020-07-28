@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>汝穿如衣</title>
+  <icon>https://wjykl22.github.io/icon.png</icon>
+  <subtitle>subtitle</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="https://wjykl22.github.io/"/>
+  <updated>2020-07-28T00:32:18.721Z</updated>
+  <id>https://wjykl22.github.io/</id>
+  
+  <author>
+    <name>Jiyang</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>粉笔公考-判断推理-图形推理</title>
+    <link href="https://wjykl22.github.io/archives/487a2936.html"/>
+    <id>https://wjykl22.github.io/archives/487a2936.html</id>
+    <published>2020-07-27T12:39:49.000Z</published>
+    <updated>2020-07-28T00:32:18.721Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;判断推理题型&quot;&gt;判断推理题型&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;图形推理&lt;/li&gt;
+&lt;li&gt;类比推理&lt;/li&gt;
+&lt;li&gt;定义判断&lt;/li&gt;
+&lt;li&gt;逻辑判断&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;图形推理&quot;&gt;图形推理&lt;/h2&gt;
+&lt;h3
+        
+      
+    
+    </summary>
+    
+    
+      <category term="公务员考试" scheme="https://wjykl22.github.io/categories/%E5%85%AC%E5%8A%A1%E5%91%98%E8%80%83%E8%AF%95/"/>
+    
+      <category term="判断推理" scheme="https://wjykl22.github.io/categories/%E5%85%AC%E5%8A%A1%E5%91%98%E8%80%83%E8%AF%95/%E5%88%A4%E6%96%AD%E6%8E%A8%E7%90%86/"/>
+    
+    
+      <category term="国考" scheme="https://wjykl22.github.io/tags/%E5%9B%BD%E8%80%83/"/>
+    
+      <category term="行测" scheme="https://wjykl22.github.io/tags/%E8%A1%8C%E6%B5%8B/"/>
+    
+      <category term="判断推理" scheme="https://wjykl22.github.io/tags/%E5%88%A4%E6%96%AD%E6%8E%A8%E7%90%86/"/>
+    
+      <category term="图形推理" scheme="https://wjykl22.github.io/tags/%E5%9B%BE%E5%BD%A2%E6%8E%A8%E7%90%86/"/>
+    
+      <category term="类比推理" scheme="https://wjykl22.github.io/tags/%E7%B1%BB%E6%AF%94%E6%8E%A8%E7%90%86/"/>
+    
+      <category term="定义判断" scheme="https://wjykl22.github.io/tags/%E5%AE%9A%E4%B9%89%E5%88%A4%E6%96%AD/"/>
+    
+      <category term="逻辑判断" scheme="https://wjykl22.github.io/tags/%E9%80%BB%E8%BE%91%E5%88%A4%E6%96%AD/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Kong和Keycloak第三方认证和权限管理</title>
+    <link href="https://wjykl22.github.io/archives/fbb6b1b9.html"/>
+    <id>https://wjykl22.github.io/archives/fbb6b1b9.html</id>
+    <published>2020-07-27T02:48:15.000Z</published>
+    <updated>2020-07-27T07:35:27.255Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2
+        
+      
+    
+    </summary>
+    
+    
+      <category term="API网关" scheme="https://wjykl22.github.io/categories/API%E7%BD%91%E5%85%B3/"/>
+    
+      <category term="Kong&amp;Konga" scheme="https://wjykl22.github.io/categories/API%E7%BD%91%E5%85%B3/Kong-Konga/"/>
+    
+      <category term="权限认证" scheme="https://wjykl22.github.io/categories/API%E7%BD%91%E5%85%B3/Kong-Konga/%E6%9D%83%E9%99%90%E8%AE%A4%E8%AF%81/"/>
+    
+    
+      <category term="Kong" scheme="https://wjykl22.github.io/tags/Kong/"/>
+    
+      <category term="keycloak" scheme="https://wjykl22.github.io/tags/keycloak/"/>
+    
+      <category term="权限认证" scheme="https://wjykl22.github.io/tags/%E6%9D%83%E9%99%90%E8%AE%A4%E8%AF%81/"/>
+    
+      <category term="docker" scheme="https://wjykl22.github.io/tags/docker/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Hello World</title>
+    <link href="https://wjykl22.github.io/archives/4a17b156.html"/>
+    <id>https://wjykl22.github.io/archives/4a17b156.html</id>
+    <published>2020-07-27T02:12:10.065Z</published>
+    <updated>2020-07-27T02:19:33.297Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot; target=&quot;_blank&quot; rel=&quot;noopener external nofollow noreferrer&quot;&gt;Hexo&lt;/a&gt;! This is your very first
+        
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>DOUBLESQUEEZE Parallel Stochastic Gradient Descent with Double-pass Error-Compensated Compression</title>
+    <link href="https://wjykl22.github.io/archives/493c0bc7.html"/>
+    <id>https://wjykl22.github.io/archives/493c0bc7.html</id>
+    <published>2020-07-24T12:45:07.000Z</published>
+    <updated>2020-07-28T00:36:09.122Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2
+        
+      
+    
+    </summary>
+    
+    
+      <category term="科研" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/"/>
+    
+      <category term="分布式机器学习" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="通信优化" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/"/>
+    
+      <category term="梯度压缩" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/%E6%A2%AF%E5%BA%A6%E5%8E%8B%E7%BC%A9/"/>
+    
+    
+      <category term="分布式机器学习" scheme="https://wjykl22.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="通信优化" scheme="https://wjykl22.github.io/tags/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/"/>
+    
+      <category term="梯度压缩" scheme="https://wjykl22.github.io/tags/%E6%A2%AF%E5%BA%A6%E5%8E%8B%E7%BC%A9/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>test</title>
+    <link href="https://wjykl22.github.io/archives/d87f7e0c.html"/>
+    <id>https://wjykl22.github.io/archives/d87f7e0c.html</id>
+    <published>2020-07-23T04:13:11.000Z</published>
+    <updated>2020-07-27T02:12:10.060Z</updated>
+    
+    <summary type="html">
+    
+      有东西被加密了，请输入密码查看
+    
+    </summary>
+    
+    
+      <category term="你好" scheme="https://wjykl22.github.io/categories/%E4%BD%A0%E5%A5%BD/"/>
+    
+    
+      <category term="hello" scheme="https://wjykl22.github.io/tags/hello/"/>
+    
+  </entry>
+  
+</feed>

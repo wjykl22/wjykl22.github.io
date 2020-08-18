@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://wjykl22.github.io/"/>
-  <updated>2020-08-12T10:53:49.141Z</updated>
+  <updated>2020-08-18T03:02:41.142Z</updated>
   <id>https://wjykl22.github.io/</id>
   
   <author>
@@ -17,11 +17,46 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>Ray参数服务器性能测评实验</title>
+    <link href="https://wjykl22.github.io/archives/d05bdbcf.html"/>
+    <id>https://wjykl22.github.io/archives/d05bdbcf.html</id>
+    <published>2020-08-13T02:53:16.000Z</published>
+    <updated>2020-08-18T03:02:41.142Z</updated>
+    
+    <summary type="html">
+    
+      此文加密，请输入密码
+    
+    </summary>
+    
+    
+      <category term="科研" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/"/>
+    
+      <category term="分布式机器学习" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="分布式框架" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%88%86%E5%B8%83%E5%BC%8F%E6%A1%86%E6%9E%B6/"/>
+    
+    
+      <category term="分布式机器学习" scheme="https://wjykl22.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="科研" scheme="https://wjykl22.github.io/tags/%E7%A7%91%E7%A0%94/"/>
+    
+      <category term="同步并行（SGD）" scheme="https://wjykl22.github.io/tags/%E5%90%8C%E6%AD%A5%E5%B9%B6%E8%A1%8C%EF%BC%88SGD%EF%BC%89/"/>
+    
+      <category term="异步并行（ASGD）" scheme="https://wjykl22.github.io/tags/%E5%BC%82%E6%AD%A5%E5%B9%B6%E8%A1%8C%EF%BC%88ASGD%EF%BC%89/"/>
+    
+      <category term="加速比分析" scheme="https://wjykl22.github.io/tags/%E5%8A%A0%E9%80%9F%E6%AF%94%E5%88%86%E6%9E%90/"/>
+    
+      <category term="Ray" scheme="https://wjykl22.github.io/tags/Ray/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Konga前端修改设计调研</title>
     <link href="https://wjykl22.github.io/archives/71d33514.html"/>
     <id>https://wjykl22.github.io/archives/71d33514.html</id>
     <published>2020-08-12T10:53:43.000Z</published>
-    <updated>2020-08-12T10:53:49.141Z</updated>
+    <updated>2020-08-13T02:52:26.332Z</updated>
     
     <summary type="html">
     
@@ -29,14 +64,29 @@
       
         
         
-          
-
+          &lt;h2 id=&quot;控制台&quot;&gt;控制台&lt;/h2&gt;
+&lt;p&gt;控制台依然沿用Konga控制台，显示主要信息，明确信息的内容，检索有关节点通用的详细信息。&lt;/p&gt;
+&lt;h2
         
       
     
     </summary>
     
     
+      <category term="API网关" scheme="https://wjykl22.github.io/categories/API%E7%BD%91%E5%85%B3/"/>
+    
+      <category term="Kong&amp;Konga" scheme="https://wjykl22.github.io/categories/API%E7%BD%91%E5%85%B3/Kong-Konga/"/>
+    
+      <category term="权限认证" scheme="https://wjykl22.github.io/categories/API%E7%BD%91%E5%85%B3/Kong-Konga/%E6%9D%83%E9%99%90%E8%AE%A4%E8%AF%81/"/>
+    
+    
+      <category term="Kong" scheme="https://wjykl22.github.io/tags/Kong/"/>
+    
+      <category term="keycloak" scheme="https://wjykl22.github.io/tags/keycloak/"/>
+    
+      <category term="权限认证" scheme="https://wjykl22.github.io/tags/%E6%9D%83%E9%99%90%E8%AE%A4%E8%AF%81/"/>
+    
+      <category term="docker" scheme="https://wjykl22.github.io/tags/docker/"/>
     
   </entry>
   

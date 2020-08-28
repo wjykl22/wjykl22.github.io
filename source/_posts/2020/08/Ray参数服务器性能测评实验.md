@@ -1,21 +1,22 @@
 ---
 title: Ray参数服务器性能测评实验
 mathjax: true
-date: 2020-08-13 10:53:16
 password: wjykl22
 abstract: 此文加密，请输入密码
 message: 请输入密码
 tags:
-	- 分布式机器学习
-	- 科研
-	- 同步并行（SGD）
-	- 异步并行（ASGD）
-	- 加速比分析
-	- Ray
+  - 分布式机器学习
+  - 科研
+  - 同步并行（SGD）
+  - 异步并行（ASGD）
+  - 加速比分析
+  - Ray
 categories:
-	- 科研
-	- 分布式机器学习
-	- 分布式框架
+  - 科研
+  - 分布式机器学习
+  - 分布式框架
+abbrlink: d05bdbcf
+date: 2020-08-13 10:53:16
 ---
 
 ## 实验目的

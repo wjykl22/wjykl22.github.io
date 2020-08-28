@@ -1,9 +1,6 @@
 ---
 title: Ray参数服务器性能测评实验
 mathjax: true
-password: wjykl22
-abstract: 此文加密，请输入密码
-message: 请输入密码
 tags:
   - 分布式机器学习
   - 科研
@@ -11,6 +8,7 @@ tags:
   - 异步并行（ASGD）
   - 加速比分析
   - Ray
+  - Encrypted
 categories:
   - 科研
   - 分布式机器学习

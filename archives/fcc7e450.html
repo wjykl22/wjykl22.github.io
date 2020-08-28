@@ -24,7 +24,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Error Compensated Quantized SGD and its Applications to Large-scale">
 <meta property="og:url" content="https://wjykl22.github.io/archives/fcc7e450.html">
-<meta property="og:site_name" content="汝穿如衣">
+<meta property="og:site_name" content="韭零后">
 <meta property="og:description" content="摘要 本文提出了一种错误补偿的随机梯度量化方法来提高训练效率。量化本地梯度来减小通信负担，但是累积的量化误差会影响收敛的速度。此外，本文对收敛行为进行了理论分析，并证明了其相对于其他算法的优势。实验表明该算法能够再不降级影响收敛性能的情况下，将梯度压缩两个数量级。 介绍 一些方法注重将梯度量化为固定值，这样可以用更少的bits来进行通信传输（Zhou et al 20161）；还有更加激进的">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://wjykl22.github.io/archives/fcc7e450/image-20200728190425444.png">
@@ -54,7 +54,7 @@
   };
 </script>
 
-  <title>Error Compensated Quantized SGD and its Applications to Large-scale | 汝穿如衣</title>
+  <title>Error Compensated Quantized SGD and its Applications to Large-scale | 韭零后</title>
   
 
 
@@ -85,7 +85,7 @@
   </style>
 </noscript>
 
-<link rel="alternate" href="/atom.xml" title="汝穿如衣" type="application/atom+xml">
+<link rel="alternate" href="/atom.xml" title="韭零后" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -106,10 +106,10 @@
 
     <a href="/" class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">汝穿如衣</h1>
+      <h1 class="site-title">韭零后</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
-      <p class="site-subtitle" itemprop="description">subtitle</p>
+      <p class="site-subtitle" itemprop="description">公元1996 - ?</p>
   </div>
 
   <div class="site-nav-right">
@@ -223,7 +223,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="汝穿如衣">
+      <meta itemprop="name" content="韭零后">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -274,13 +274,6 @@
               </span>
               <span class="post-meta-item-text">阅读次数：</span>
               <span class="leancloud-visitors-count"></span>
-            </span>
-            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span id="busuanzi_value_page_pv"></span>
             </span>
   
   <span class="post-meta-item">
@@ -462,8 +455,7 @@
       <div class="popular-posts-title"><a href="\archives\493c0bc7.html" rel="bookmark">DOUBLESQUEEZE Parallel Stochastic Gradient Descent with Double-pass Error-Compensated Compression</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\archives\d34fba27.html" rel="bookmark">LAQ和LAG代码研读</a></div>
-        <div class="popular-posts-excerpt"><p>此文加密，请输入密码</p></div>
+      <div class="popular-posts-title"><a href="\archives\5cf57987.html" rel="bookmark">分布式学习通信优化综述（2020香港大学）</a></div>
     </li>
   </ul>
 
@@ -572,19 +564,23 @@
 
   <aside class="sidebar">
     <div class="sidebar-inner">
+    
 
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
+            <ul class="sidebar-nav motion-element">
+              <li class="sidebar-nav-toc">
+                文章目录
+              </li>
+              <li class="sidebar-nav-overview">
+                站点概览
+              </li>
+            </ul>
+    
+
+
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#摘要"><span class="nav-number">1.</span> <span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#介绍"><span class="nav-number">2.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相关工作"><span class="nav-number">3.</span> <span class="nav-text">相关工作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#异步sgd"><span class="nav-number">3.1.</span> <span class="nav-text">异步SGD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#梯度量化"><span class="nav-number">3.2.</span> <span class="nav-text">梯度量化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#梯度稀疏化"><span class="nav-number">3.3.</span> <span class="nav-text">梯度稀疏化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#preliminaries"><span class="nav-number">4.</span> <span class="nav-text">Preliminaries</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#误差压缩量化sgd方法"><span class="nav-number">5.</span> <span class="nav-text">误差压缩量化SGD方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#理论分析"><span class="nav-number">6.</span> <span class="nav-text">理论分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实验分析"><span class="nav-number">7.</span> <span class="nav-text">实验分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#线性模型"><span class="nav-number">7.1.</span> <span class="nav-text">线性模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#卷积神经网络"><span class="nav-number">7.2.</span> <span class="nav-text">卷积神经网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#性能模型"><span class="nav-number">7.3.</span> <span class="nav-text">性能模型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结论"><span class="nav-number">8.</span> <span class="nav-text">结论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#部分参考文献"><span class="nav-number">9.</span> <span class="nav-text">部分参考文献</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#摘要"><span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#介绍"><span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相关工作"><span class="nav-text">相关工作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#异步sgd"><span class="nav-text">异步SGD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#梯度量化"><span class="nav-text">梯度量化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#梯度稀疏化"><span class="nav-text">梯度稀疏化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#preliminaries"><span class="nav-text">Preliminaries</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#误差压缩量化sgd方法"><span class="nav-text">误差压缩量化SGD方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#理论分析"><span class="nav-text">理论分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实验分析"><span class="nav-text">实验分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#线性模型"><span class="nav-text">线性模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#卷积神经网络"><span class="nav-text">卷积神经网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#性能模型"><span class="nav-text">性能模型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结论"><span class="nav-text">结论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#部分参考文献"><span class="nav-text">部分参考文献</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -599,18 +595,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-count">19</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
-        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-count">16</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -636,6 +632,14 @@
         
         
           <li>
+            <a href="/archives/6fa57430.html" title="2020.08.26小组汇报" target="_blank">2020.08.26小组汇报</a>
+          </li>
+        
+          <li>
+            <a href="/archives/5cf57987.html" title="分布式学习通信优化综述（2020香港大学）" target="_blank">分布式学习通信优化综述（2020香港大学）</a>
+          </li>
+        
+          <li>
             <a href="/archives/d05bdbcf.html" title="Ray参数服务器性能测评实验" target="_blank">Ray参数服务器性能测评实验</a>
           </li>
         
@@ -645,14 +649,6 @@
         
           <li>
             <a href="/archives/d34fba27.html" title="LAQ和LAG代码研读" target="_blank">LAQ和LAG代码研读</a>
-          </li>
-        
-          <li>
-            <a href="/archives/11684b86.html" title="平头、乌鸦和士兵" target="_blank">平头、乌鸦和士兵</a>
-          </li>
-        
-          <li>
-            <a href="/archives/70896bd9.html" title="孕线与十字孕线、启明星与黄昏线" target="_blank">孕线与十字孕线、启明星与黄昏线</a>
           </li>
         
       </ul>
@@ -952,13 +948,13 @@ if(canvas.getContext){
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">233k</span>
+    <span title="站点总字数">248k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">3:32</span>
+    <span title="站点阅读时长">3:45</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener external nofollow noreferrer" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

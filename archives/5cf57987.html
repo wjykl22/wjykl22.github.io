@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=EB Garamond:300,300italic,400,400italic,700,700italic|Cinzel Decorative:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wjykl22.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="综述名：Communication-Efficient Distributed Deep Learning: A Comprehensive Survey 发表年限：2020 简介：从以下四个维度对分布式训练算法进行介绍  通信同步和频次 主要有以下两个方向： （1）宽松同步条件为异步并行（ASGD）或延迟同步并行（SSP） （2）本地多次迭代后进行通信 系统架构和梯度聚合 （1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式学习通信优化综述（2020香港大学）">
+<meta property="og:url" content="https://wjykl22.github.io/archives/5cf57987.html">
+<meta property="og:site_name" content="韭零后">
+<meta property="og:description" content="综述名：Communication-Efficient Distributed Deep Learning: A Comprehensive Survey 发表年限：2020 简介：从以下四个维度对分布式训练算法进行介绍  通信同步和频次 主要有以下两个方向： （1）宽松同步条件为异步并行（ASGD）或延迟同步并行（SSP） （2）本地多次迭代后进行通信 系统架构和梯度聚合 （1">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-08-26T06:13:54.000Z">
+<meta property="article:modified_time" content="2020-08-28T11:30:10.385Z">
+<meta property="article:author" content="Jiyang">
+<meta property="article:tag" content="分布式机器学习">
+<meta property="article:tag" content="通信优化">
+<meta property="article:tag" content="梯度压缩">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://wjykl22.github.io/archives/5cf57987.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>分布式学习通信优化综述（2020香港大学） | 韭零后</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="韭零后" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">韭零后</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">公元1996 - ?</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-主页">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>主页</a>
+
+  </li>
+        <li class="menu-item menu-item-关于">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-标签">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-目录">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>目录</a>
+
+  </li>
+        <li class="menu-item menu-item-结构">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>结构</a>
+
+  </li>
+        <li class="menu-item menu-item-站点地图">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-公益">
+
+    <a href="/404.html" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wjykl22.github.io/archives/5cf57987.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/avatar.jpg">
+      <meta itemprop="name" content="Jiyang">
+      <meta itemprop="description" content="世界上有两样东西不可直视，一是太阳，二是人心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="韭零后">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          分布式学习通信优化综述（2020香港大学）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-26 14:13:54" itemprop="dateCreated datePublished" datetime="2020-08-26T14:13:54+08:00">2020-08-26</time>
+            </span>
+            
+                <i class="fa fa-thumb-tack"></i>
+                <font color=7D26CD>置顶</font>
+                <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-08-28 19:30:10" itemprop="dateModified" datetime="2020-08-28T19:30:10+08:00">2020-08-28</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%A7%91%E7%A0%94/" itemprop="url" rel="index"><span itemprop="name">科研</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">分布式机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/" itemprop="url" rel="index"><span itemprop="name">通信优化</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/%E6%A2%AF%E5%BA%A6%E5%8E%8B%E7%BC%A9/" itemprop="url" rel="index"><span itemprop="name">梯度压缩</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/archives/5cf57987.html" class="post-meta-item leancloud_visitors" data-flag-title="分布式学习通信优化综述（2020香港大学）" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/archives/5cf57987.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/5cf57987.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>10k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>综述名</strong>：Communication-Efficient Distributed Deep Learning: A Comprehensive Survey</p>
+<p><strong>发表年限：</strong>2020</p>
+<p><strong>简介：</strong>从以下四个维度对分布式训练算法进行介绍</p>
+<ol type="1">
+<li><p>通信同步和频次</p>
+<p>主要有以下两个方向：</p>
+<p>（1）宽松同步条件为异步并行（ASGD）或延迟同步并行（SSP）</p>
+<p>（2）本地多次迭代后进行通信</p></li>
+<li><p>系统架构和梯度聚合</p>
+<p>（1）宽松参数服务器架构中的拥塞问题，MPI的去中心化拓扑</p>
+<p>（2）Gossip架构</p>
+<blockquote>
+<p>工作节点能够从听一个或多个节点中获取模型，解决拥塞问题，并且减少了通信量</p>
+</blockquote></li>
+<li><p>压缩技术</p>
+<p>（1）量化</p>
+<p>（2）编码</p>
+<p>（3）稀疏化</p></li>
+<li><p>通信和计算的并行</p>
+<p>简称为流水线算法，使得通信和计算充分并行。</p></li>
+</ol>
+<p>分布式SGD通信优化——以表格方式归纳如下：</p>
+<table>
+<thead>
+<tr class="header">
+<th>维度</th>
+<th>方法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>通信同步和频次</td>
+<td>同步方法（SGD）<br>延迟受限同步<br>异步方法（ASGD）<br>本地SGD</td>
+</tr>
+<tr class="even">
+<td>系统架构</td>
+<td>参数服务器架构<br>All-Reduce架构<br>Gossip架构</td>
+</tr>
+<tr class="odd">
+<td>压缩技术</td>
+<td>量化<br>编码<br>稀疏化</td>
+</tr>
+<tr class="even">
+<td>计算和同行并行</td>
+<td>流水线方法<br>调度方法</td>
+</tr>
+</tbody>
+</table>
+<h2 id="分布式学习分类">分布式学习分类</h2>
+<h3 id="通信同步和频次">通信同步和频次</h3>
+<h4 id="同步并行">同步并行</h4>
+<h4 id="受限同步并行">受限同步并行</h4>
+<p>[Chen et al.] <a href="#refer-anchor-1"><sup>[1]</sup></a>提出了候补节点<span class="math inline">\(n_e\)</span>。主要思想是当有<span class="math inline">\(n\)</span>个节点到达之后，就不再等待梯度还未到达的<span class="math inline">\(n_e\)</span>个节点。它们的梯度值将会被舍去。</p>
+<p>[Ho et al.] <a href="#refer-anchor-2"><sup>[2]</sup></a>提出了SSP模型，设定了一个阈值，允许在阈值之内，计算较快的工作节点迭代更多次数并更新全局参数，但是当最快节点和最慢节点到达阈值时，快速的节点需要等待慢速的节点回归合理阈值。</p>
+<p>对于<code>拥塞问题</code>，[Chen et al] 提出了Round-Robin同步并行方法，该算法在整个训练过程中均匀交错工作节点更新，并以固定的循环顺序协调工作节点更新梯度。</p>
+<h4 id="异步并行">异步并行</h4>
+<p>[Mote et al.] <a href="#refer-anchor-3"><sup>[3]</sup></a>提出了高通信效率的分布式交替方向乘数法（D-ADMM），他是对ADMM算法的扩展。[Wei et al.] <a href="#refer-anchor-6"><sup>[6]</sup></a><a href="#refer-anchor-7"><sup>[7]</sup></a>将其拓展为去中心化的ADMM算法。</p>
+<p>之后有更多的学者对ADMM算法进行优化 <a href="#refer-anchor-7"><sup>[7]</sup></a>，[Li et al.] <a href="#refer-anchor-8"><sup>[8]</sup></a>提出了延迟闭塞近端梯度法（Delayed Block Proximal Gradient Method），该算法只在每次迭代过程中异步更新参数中的一块内容，因此在通信的过程中只需要上传一部分参数。</p>
+<p>[Grishchenko et al.]提出了一种异步分配算法，其特点是向上通信(从工人到主人)的稀疏化，他们通过对本地更新条目的统一抽样选择来实现稀疏化，这使得通信更加高效。</p>
+<p>但是异步的方法往往收敛性得不到保证。</p>
+<h4 id="本地sgd">本地SGD</h4>
+<p>基本思想是在多轮迭代之后进行通信<a href="#refer-anchor-9"><sup>[9]</sup></a><a href="#refer-anchor-10"><sup>[10]</sup></a><a href="#refer-anchor-11"><sup>[11]</sup></a><a href="#refer-anchor-12"><sup>[12]</sup></a><a href="#refer-anchor-13"><sup>[13]</sup></a><a href="#refer-anchor-14"><sup>[14]</sup></a><a href="#refer-anchor-15"><sup>[15]</sup></a><a href="#refer-anchor-16"><sup>[16]</sup></a><a href="#refer-anchor-17"><sup>[17]</sup></a>。</p>
+<p>[Yu et al.] <a href="#refer-anchor-18"><sup>[18]</sup></a>结合了分布式动量的SGD方法和PR-SGD<a href="#refer-anchor-19"><sup>[19]</sup></a>方法来提高了本地SGD方法的性能，并且证明了线性加速比。</p>
+<p>[Jiang et al.] <a href="#refer-anchor-20"><sup>[20]</sup></a>将量化方法和本地SGD方法做了结合，降低了通信的复杂度。</p>
+<p>其他能够减少通信数据量的方法是提高批量大小。[Yu et al.] <a href="#refer-anchor-21"><sup>[21]</sup></a>提出了Catalyst-like<a href="#refer-anchor-22"><sup>[22]</sup></a><a href="#refer-anchor-23"><sup>[23]</sup></a>算法，能够在每轮迭代之后动态提高批量大小，并达到和SSP方法下沟通的收敛速率。</p>
+<p>大批量的SGD方法会使得泛化性能降低。[Lin et al.] <a href="#refer-anchor-24"><sup>[24]</sup></a>提出了post-local SGD方法来解决这个问题。该算法将整个训练过程分为两个阶段，第一阶段采用小批量SGD，第二阶段采用局部SGD。</p>
+<h3 id="中心化和去中心化架构">中心化和去中心化架构</h3>
+<h3 id="量化方法">量化方法</h3>
+<h4 id="方法一">方法一</h4>
+<p>数据并行下的梯度量化方法其实是一种分布式平均估计问题<a href="#refer-anchor-25"><sup>[25]</sup></a><a href="#refer-anchor-26"><sup>[26]</sup></a>。[Suresh et al] <a href="#refer-anchor-25"><sup>[25]</sup></a>和[Jakub et al] <a href="#refer-anchor-26"><sup>[26]</sup></a>对分布式平均估计进行了通信效率算法的分析。他们使用均方误差的方法，并提出了一种在给定通信成本下的编码策略以达到最佳的MSE。为了减少通信成本，[Suresh et al.] <a href="#refer-anchor-25"><sup>[25]</sup></a> 提出了两种方法，随机旋转量化（Stochastic Rotated Quantization），所有工作节点和中央服务器生成一个全局随机旋转矩阵，并尝试找到一个正交矩阵<span class="math inline">\(\mathbb{R}\)</span>。变长编码（Variable Length Coding）采用对应每个量化值出现次数的霍夫曼编码算法。</p>
+<h4 id="方法二">方法二</h4>
+<p>[Sei et al.] <a href="#refer-anchor-27"><sup>[27]</sup></a> 为了降低量化误差带来的负面影响，作者使用了误差补偿技术：每次量化时，把上一次迭代的量化误差加到本次迭代的梯度上，然后再进行量化，接着求出本次量化操作的误差。这种误差补偿机制可以确保所有的梯度都会再一定程度上对模型更新产生作用，只不过这种作用分散在不同的迭代中——类似于一种延迟更新的形式。作者指出，使用误差补偿后，就可以在几乎不损失模型精度的情况下将梯度由32位量化成1位。 <span class="math display">\[
+\begin{aligned}
+G_{i j \ell}^{\text {quant }}(t) &amp;=\mathcal{Q}\left(G_{i j \ell}(t)+\Delta_{i j \ell}(t-N)\right) \\
+\Delta_{i j \ell}(t) &amp;=G_{i j \ell}(t)-\mathcal{Q}^{-1}\left(G_{i j \ell}^{\text {quant }}(t)\right)
+\end{aligned}
+\]</span> 其中<span class="math inline">\(\mathcal{Q}(\cdot)\)</span>表示量化函数，<span class="math inline">\(G_{i j \ell}^{\text {quant }}(t)\)</span>表示量化之后的整型数值。我们在量化过程中会保证<span class="math inline">\(\Delta_{i j \ell}(t)\)</span>被加到下一轮的梯度过程中（也称为了误差补偿机制）。</p>
+<p>举个例子，在具体的实现上，比较简单的方法是将大于<span class="math inline">\(0\)</span>的梯度值编码成为<span class="math inline">\(1\)</span>，小于等于<span class="math inline">\(0\)</span>的梯度值编码为<span class="math inline">\(0\)</span>。在解码的时候，将<span class="math inline">\(1\)</span>编码为<span class="math inline">\(+1\)</span>，将<span class="math inline">\(0\)</span>解码为<span class="math inline">\(-1\)</span>，在进行聚合操作。</p>
+<p>其他一些研究采用不精确的近端梯度提出了自适应的量化方法[168][169]，但是这些方法缺乏在深度学习模型种的实践。</p>
+<p>考虑到需要同时具备高通信效率和好的收敛性，[Alistarh et al.] <a href="#refer-anchor-28"><sup>[28]</sup></a> 提出了一种基于量化的算法，而不仅仅只是量化方法。这种量化算法叫做QSGD，可以平衡传输的比特数与压缩梯度的方差。</p>
+<h4 id="方法三">方法三</h4>
+<p>[Wen et al.] <a href="#refer-anchor-29"><sup>[29]</sup></a> 提出了另一种叫做TernGrad的压缩通信量的模式，它可以使用三元梯度来加速分布式深度学习。在TernGrad中，梯度<span class="math inline">\(G(x)\)</span>被量化为三元组<span class="math inline">\(\{-1,0,1\}\)</span>来减少通信量化大小。梯度<span class="math inline">\(G(x)\)</span>量化如下： <span class="math display">\[
+\tilde{Q}_{t}\left(G\left(\mathbf{x}_{t}\right)\right)=\operatorname{ternarize}\left(G\left(\mathbf{x}_{t}\right)\right)=s_{t} \cdot \operatorname{sign}\left(G\left(\mathbf{x}_{t}\right)\right) \circ \mathbf{b}_{t}
+\]</span> 其中<span class="math inline">\(s_{t}:=\max \left(a b s\left(G\left(\mathbf{x}_{t}\right)\right)\right)\)</span>以及$ <span class="math inline">\(表示哈达玛积。\)</span>()<span class="math inline">\(和SGD中的\)</span>()<span class="math inline">\(是一致的。每个\)</span>b_t$元素遵循如下分布： <span class="math display">\[
+\begin{array}{l}
+P\left(b_{t, j}=1 \mid G_{t}\left(\mathbf{x}_{t}\right)\right)=\left|G_{t, j}\left(\mathbf{x}_{t}\right) / s_{t}\right| \\
+P\left(b_{t, j}=0 \mid G_{t}\left(\mathbf{x}_{t}\right)\right)=1-\left|G_{t, j}\left(\mathbf{x}_{t}\right) / s_{t}\right|
+\end{array}
+\]</span></p>
+<h4 id="方法四">方法四</h4>
+<p>Sign-SGD是另外一种量化方法 <a href="#refer-anchor-30"><sup>[30]</sup></a>。在Sign-SGD中，每个工作节点将梯度量化为二进制值，它是梯度向量的每个坐标的符号。[Bernstein et al.] <a href="#refer-anchor-31"><sup>[31]</sup></a>提供了基于该方法在非凸优化上的理论分析。他们证明了当梯度与随机度和曲率一样稠密或更密集时，Sign-SGD可以以一个理论速率收敛。[Bernstein et al.] <a href="#refer-anchor-31"><sup>[31]</sup></a>还提出了一种具有大多数投票的Sign-SGD方法。在工作节点将他们的梯度向量的符号交换到服务器后，整体的更新由多数人投票决定。通过这种方法，将通信成本降低了32倍。</p>
+<h4 id="方法五">方法五</h4>
+<p>[Wang et al.] <a href="#refer-anchor-32"><sup>[32]</sup></a>提出了一种新的方法叫做原子稀疏化方法（Atomic Sparsification (ATOMO)）。他证明了梯度稀疏化和量化是原子分解过程中梯度稀疏化的一般方法的一部分，例如QSGD、奇异值分解（SVD）、傅里叶分解等。ATOMO的目标是最小化在原子基础上稀疏的稀疏梯度的方差，并保持它作为原始梯度的无偏估计量。它们说明了1位的QSGD和TernGrad是ATOMO的特殊情况。此外，他们用SVD改进了ATOMO，称为Spectral-ATOMO。在他们的实验中，与QSGD和TernGrad相比，Spectral-ATOMO分别减少了2倍和3倍的训练时间。</p>
+<h4 id="方法六">方法六</h4>
+<p>[Mishchenko et al.] <a href="#refer-anchor-33"><sup>[33]</sup></a>介绍了DIANA这种创新方法，它扩展了QSGD和Terngrad这两种方法，将这个梯度向量划分成多个子向量，并将每个子向量进行独立压缩。</p>
+<h4 id="方法七">方法七</h4>
+<p>[Sun et al.] <a href="#refer-anchor-34"><sup>[34]</sup></a>的LAQ方法</p>
+<h4 id="方法八">方法八</h4>
+<p>[Horvth et al.] <a href="#refer-anchor-36"><sup>[36]</sup></a>提出了一种新的压缩方法，叫做自然压缩(Natural Compression)。这种压缩方法定义如下： <span class="math display">\[
+C_{n a t}(t):=\left\{\begin{array}{ll}
+\operatorname{sign}(t) \cdot 2^{\left\lfloor\log _{2}|t|\right\rfloor}, &amp; \text { with probability } p(t) \\
+\operatorname{sign}(t) \cdot 2^{\left\lfloor\log _{2}|t|\right\rfloor}, &amp; \text { with probability } 1-p(t)
+\end{array}\right.
+\]</span></p>
+<p>其中<span class="math inline">\(p(t):=\frac{2^{\left\lceil\log _{2}|t|-|t|\right\rceil}}{2^{\left\lfloor\log _{2}|t|\right\rfloor}}\)</span>。他们提出的这种压缩方法能够将方差忽略不计，因此有较好的收敛性。这个方法的一个优势是<span class="math inline">\(C_{nat}\)</span>能够去掉二进制表示中的尾数。他们提出了与QSGD的抖动是类似的。</p>
+<p>[Yu et al.] <a href="#refer-anchor-35"><sup>[35]</sup></a>提出了名为AsyLPGd低精度算法，在异步框架中使用，同时量化梯度和模型参数。它使用额外的要求来限制量化级别。他们将稀疏化方法和AsyLPG相结合，进一步降低通信的复杂度。</p>
+<h3 id="稀疏化方法">稀疏化方法</h3>
+<h3 id="计算和通信流水线调度">计算和通信流水线调度</h3>
+<h2 id="未来优化方向">未来优化方向</h2>
+<h2 id="参考文献">参考文献</h2>
+<div id="refer-anchor-1">
+
+</div>
+<ul>
+<li>[1] <a href="https://arxiv.org/abs/1604.00981" target="_blank" rel="noopener external nofollow noreferrer">Chen J, Pan X, Monga R, et al. Revisiting distributed synchronous SGD[J]. arXiv preprint arXiv:1604.00981, 2016.</a>
+<div id="refer-anchor-2">
+
+</div></li>
+<li>[2] <a href="http://papers.nips.cc/paper/4894-more-effective-distributed-ml-via-as" target="_blank" rel="noopener external nofollow noreferrer">Ho Q, Cipar J, Cui H, et al. More effective distributed ml via a stale synchronous parallel parameter server[C]//Advances in neural information processing systems. 2013: 1223-1231.</a>
+<div id="refer-anchor-3">
+
+</div></li>
+<li>[3] <a href="https://home.cse.ust.hk/~weiwa/papers/chen-infocom19.pdf" target="_blank" rel="noopener external nofollow noreferrer">Chen C, Wang W, Li B. Round-robin synchronization: Mitigating communication bottlenecks in parameter servers[C]//IEEE INFOCOM 2019-IEEE Conference on Computer Communications. IEEE, 2019: 532-540.</a>
+<div id="refer-anchor-4">
+
+</div></li>
+<li>[4] <a href="https://ieeexplore.ieee.org/abstract/document/6484993/" target="_blank" rel="noopener external nofollow noreferrer">Mota J F C, Xavier J M F, Aguiar P M Q, et al. D-ADMM: A communication-efficient distributed algorithm for separable optimization[J]. IEEE Transactions on Signal Processing, 2013, 61(10): 2718-2723.</a>
+<div id="refer-anchor-5">
+
+</div></li>
+<li>[5] <a href="https://ieeexplore.ieee.org/abstract/document/6425904/" target="_blank" rel="noopener external nofollow noreferrer">Wei E, Ozdaglar A. Distributed alternating direction method of multipliers[C]//2012 IEEE 51st IEEE Conference on Decision and Control (CDC). IEEE, 2012: 5445-5450.</a>
+<div id="refer-anchor-6">
+
+</div></li>
+<li>[6] <a href="https://ieeexplore.ieee.org/abstract/document/7472585/" target="_blank" rel="noopener external nofollow noreferrer">Chang T H, Hong M, Liao W C, et al. Asynchronous distributed alternating direction method of multipliers: Algorithm and convergence analysis[C]//2016 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP). IEEE, 2016: 4781-4785.</a></li>
+</ul>
+<div id="refer-anchor-7">
+
+</div>
+<ul>
+<li>[7] <a href="http://www.jmlr.org/proceedings/papers/v32/zhange14.pdf" target="_blank" rel="noopener external nofollow noreferrer">Zhang R, Kwok J. Asynchronous distributed ADMM for consensus optimization[C]//International conference on machine learning. 2014: 1701-1709.</a>
+<div id="refer-anchor-8">
+
+</div></li>
+<li>[8] <a href="http://papers.nips.cc/paper/5597-communication-efficient-distributed-machine-learning-with-the-parameter-server" target="_blank" rel="noopener external nofollow noreferrer">Li M, Andersen D G, Smola A J, et al. Communication efficient distributed machine learning with the parameter server[C]//Advances in Neural Information Processing Systems. 2014: 19-27.</a>
+<div id="refer-anchor-9">
+
+</div></li>
+<li>[9] <a href="https://arxiv.org/abs/1403.7550" target="_blank" rel="noopener external nofollow noreferrer">Zhang C, Ré C. Dimmwitted: A study of main-memory statistical analytics[J]. arXiv preprint arXiv:1403.7550, 2014.</a>
+<div id="refer-anchor-10">
+
+</div></li>
+<li>[10] <a href="https://arxiv.org/abs/1603.04379" target="_blank" rel="noopener external nofollow noreferrer">Bijral A S, Sarwate A D, Srebro N. On data dependence in distributed stochastic optimization[J]. arXiv preprint arXiv:1603.04379, 2016.</a>
+<div id="refer-anchor-11">
+
+</div></li>
+<li>[11] <a href="https://arxiv.org/abs/1606.07365" target="_blank" rel="noopener external nofollow noreferrer">Zhang J, De Sa C, Mitliagkas I, et al. Parallel SGD: When does averaging help?[J]. arXiv preprint arXiv:1606.07365, 2016.</a>
+<div id="refer-anchor-12">
+
+</div></li>
+<li>[12] <a href="http://papers.nips.cc/paper/9288-local-sgd-with-periodic-averaging-tighter-analysis-and-adaptive-synchronization" target="_blank" rel="noopener external nofollow noreferrer">Haddadpour F, Kamani M M, Mahdavi M, et al. Local SGD with periodic averaging: Tighter analysis and adaptive synchronization[C]//Advances in Neural Information Processing Systems. 2019: 11082-11094.</a>
+<div id="refer-anchor-13">
+
+</div></li>
+<li>[13] <a href="https://www.aclweb.org/anthology/N10-1069.pdf" target="_blank" rel="noopener external nofollow noreferrer">McDonald R, Hall K, Mann G. Distributed training strategies for the structured perceptron[C]//Human language technologies: The 2010 annual conference of the North American chapter of the association for computational linguistics. 2010: 456-464.</a>
+<div id="refer-anchor-14">
+
+</div></li>
+<li>[14] <a href="http://papers.nips.cc/paper/3881-efficient-large-scale-distributed-training-of-conditional-maximum-entropy-models" target="_blank" rel="noopener external nofollow noreferrer">Mcdonald R, Mohri M, Silberman N, et al. Efficient large-scale distributed training of conditional maximum entropy models[C]//Advances in neural information processing systems. 2009: 1231-1239.</a>
+<div id="refer-anchor-15">
+
+</div></li>
+<li>[15] <a href="https://ieeexplore.ieee.org/abstract/document/6853589/" target="_blank" rel="noopener external nofollow noreferrer">Zhang X, Trmal J, Povey D, et al. Improving deep neural network acoustic models using generalized maxout networks[C]//2014 IEEE international conference on acoustics, speech and signal processing (ICASSP). IEEE, 2014: 215-219.</a>
+<div id="refer-anchor-16">
+
+</div></li>
+<li>[16] <a href="http://papers.nips.cc/paper/5761-deep-learning-with-elastic-averaging-sgd" target="_blank" rel="noopener external nofollow noreferrer">Zhang S, Choromanska A E, LeCun Y. Deep learning with elastic averaging SGD[C]//Advances in neural information processing systems. 2015: 685-693.</a>
+<div id="refer-anchor-17">
+
+</div></li>
+<li>[17] <a href="https://www.aaai.org/ojs/index.php/AAAI/article/view/4514" target="_blank" rel="noopener external nofollow noreferrer">Yu H, Yang S, Zhu S. Parallel restarted SGD with faster convergence and less communication: Demystifying why model averaging works for deep learning[C]//Proceedings of the AAAI Conference on Artificial Intelligence. 2019, 33: 5693-5700.</a>
+<div id="refer-anchor-18">
+
+</div></li>
+<li>[18] <a href="https://arxiv.org/abs/1905.03817" target="_blank" rel="noopener external nofollow noreferrer">Yu H, Jin R, Yang S. On the linear speedup analysis of communication efficient momentum sgd for distributed non-convex optimization[J]. arXiv preprint arXiv:1905.03817, 2019.</a>
+<div id="refer-anchor-19">
+
+</div></li>
+<li>[19] <a href="https://www.aaai.org/ojs/index.php/AAAI/article/view/4514" target="_blank" rel="noopener external nofollow noreferrer">Yu H, Yang S, Zhu S. Parallel restarted SGD with faster convergence and less communication: Demystifying why model averaging works for deep learning[C]//Proceedings of the AAAI Conference on Artificial Intelligence. 2019, 33: 5693-5700.</a>
+<div id="refer-anchor-20">
+
+</div></li>
+<li>[20] <a href="http://papers.nips.cc/paper/7519-a-linear-speedup-analysis-of-distributed-deep-learning-with-sparse-and-quantized-communication" target="_blank" rel="noopener external nofollow noreferrer">Jiang P, Agrawal G. A linear speedup analysis of distributed deep learning with sparse and quantized communication[C]//Advances in Neural Information Processing Systems. 2018: 2525-2536.</a>
+<div id="refer-anchor-21">
+
+</div></li>
+<li>[21] <a href="https://arxiv.org/abs/1905.04346" target="_blank" rel="noopener external nofollow noreferrer">Yu H, Jin R. On the computation and communication complexity of parallel SGD with dynamic batch sizes for stochastic non-convex optimization[J]. arXiv preprint arXiv:1905.04346, 2019.</a>
+<div id="refer-anchor-22">
+
+</div></li>
+<li>[22] <a href="http://papers.nips.cc/paper/5928-a-universal-catalyst-for-first-order-optimization" target="_blank" rel="noopener external nofollow noreferrer">Lin H, Mairal J, Harchaoui Z. A universal catalyst for first-order optimization[C]//Advances in neural information processing systems. 2015: 3384-3392.</a>
+<div id="refer-anchor-23">
+
+</div></li>
+<li>[23] <a href="https://hal.inria.fr/hal-01773296/" target="_blank" rel="noopener external nofollow noreferrer">Paquette C, Lin H, Drusvyatskiy D, et al. Catalyst for gradient-based nonconvex optimization[C]. 2018.</a>
+<div id="refer-anchor-24">
+
+</div></li>
+<li>[24] <a href="https://arxiv.org/abs/1808.07217" target="_blank" rel="noopener external nofollow noreferrer">Lin T, Stich S U, Patel K K, et al. Don't Use Large Mini-Batches, Use Local SGD[J]. arXiv preprint arXiv:1808.07217, 2018.</a>
+<div id="refer-anchor-25">
+
+</div></li>
+<li>[25] <a href="http://proceedings.mlr.press/v70/suresh17a.html" target="_blank" rel="noopener external nofollow noreferrer">Suresh A T, Felix X Y, Kumar S, et al. Distributed mean estimation with limited communication[C]//International Conference on Machine Learning. 2017: 3329-3337.</a>
+<div id="refer-anchor-26">
+
+</div></li>
+<li>[26] <a href="https://www.frontiersin.org/articles/10.3389/fams.2018.00062/full" target="_blank" rel="noopener external nofollow noreferrer">Konečný J, Richtárik P. Randomized distributed mean estimation: Accuracy vs. communication[J]. Frontiers in Applied Mathematics and Statistics, 2018, 4: 62.</a>
+<div id="refer-anchor-27">
+
+</div></li>
+<li>[27] <a href="https://www.isca-speech.org/archive/interspeech_2014/i14_1058.html" target="_blank" rel="noopener external nofollow noreferrer">Seide F, Fu H, Droppo J, et al. 1-bit stochastic gradient descent and its application to data-parallel distributed training of speech dnns[C]//Fifteenth Annual Conference of the International Speech Communication Association. 2014.</a></li>
+<li><div id="refer-anchor-28">
+
+</div></li>
+<li>[28] <a href="https://scholar.google.com.hk/scholar?hl=zh-CN&amp;as_sdt=0%2C5&amp;q=Qsgd%3A+Randomized+quantization+for+communication-optimal+stochastic+gradient+descent&amp;btnG=" target="_blank" rel="noopener external nofollow noreferrer">Alistarh D, Li J, Tomioka R, et al. Qsgd: Randomized quantization for communication-optimal stochastic gradient descent[J]. arXiv preprint arXiv:1610.02132, 2016.</a>
+<div id="refer-anchor-29">
+
+</div></li>
+<li>[29] <a href="http://papers.nips.cc/paper/6749-terngrad-ternary-gradients-to-reduce-communication-in-distributed-deep-learning" target="_blank" rel="noopener external nofollow noreferrer">Wen W, Xu C, Yan F, et al. Terngrad: Ternary gradients to reduce communication in distributed deep learning[C]//Advances in neural information processing systems. 2017: 1509-1519.</a>
+<div id="refer-anchor-30">
+
+</div></li>
+<li>[30] <a href="https://arxiv.org/abs/1802.04434" target="_blank" rel="noopener external nofollow noreferrer">Bernstein J, Wang Y X, Azizzadenesheli K, et al. signSGD: Compressed optimisation for non-convex problems[J]. arXiv preprint arXiv:1802.04434, 2018.</a>
+<div id="refer-anchor-31">
+
+</div></li>
+<li>[31] <a href="https://arxiv.org/abs/1810.05291" target="_blank" rel="noopener external nofollow noreferrer">Bernstein J, Zhao J, Azizzadenesheli K, et al. signSGD with majority vote is communication efficient and fault tolerant[J]. arXiv preprint arXiv:1810.05291, 2018.</a>
+<div id="refer-anchor-32">
+
+</div></li>
+<li>[32] <a href="http://papers.nips.cc/paper/8191-atomo-communication-efficient-learning-via-atomic-sparsification" target="_blank" rel="noopener external nofollow noreferrer">Wang H, Sievert S, Liu S, et al. Atomo: Communication-efficient learning via atomic sparsification[C]//Advances in Neural Information Processing Systems. 2018: 9850-9861.</a>
+<div id="refer-anchor-33">
+
+</div></li>
+<li>[33] <a href="https://arxiv.org/abs/1901.09269" target="_blank" rel="noopener external nofollow noreferrer">Mishchenko K, Gorbunov E, Takáč M, et al. Distributed learning with compressed gradient differences[J]. arXiv preprint arXiv:1901.09269, 2019.</a>
+<div id="refer-anchor-34">
+
+</div></li>
+<li>[34] <a href="http://papers.nips.cc/paper/8598-communication-efficient-distributed-learning-via-lazily-aggregated-quantified-grades" target="_blank" rel="noopener external nofollow noreferrer">Sun J, Chen T, Giannakis G, et al. Communication-efficient distributed learning via lazily aggregated quantized gradients[C]//Advances in Neural Information Processing Systems. 2019: 3370-3380.</a>
+<div id="refer-anchor-35">
+
+</div></li>
+<li>[35] <a href="http://papers.nips.cc/paper/8694-double-quantization-for-communication-efficient-distributed-optimization" target="_blank" rel="noopener external nofollow noreferrer">Yu Y, Wu J, Huang L. Double quantization for communication-efficient distributed optimization[C]//Advances in Neural Information Processing Systems. 2019: 4438-4449.</a>
+<div id="refer-anchor-36">
+
+</div></li>
+<li>[36] <a href="https://arxiv.org/abs/1905.10988" target="_blank" rel="noopener external nofollow noreferrer">Horvath S, Ho C Y, Horvath L, et al. Natural compression for distributed deep learning[J]. arXiv preprint arXiv:1905.10988, 2019.</a>
+<div id="refer-anchor-37">
+
+</div></li>
+</ul>
+<div id="refer-anchor-38">
+
+</div>
+<div id="refer-anchor-27">
+
+</div>
+<div id="refer-anchor-27">
+
+</div>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章推荐</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\archives\88211b35.html" rel="bookmark">分布式机器学习量化通信综述</a></div>
+        <div class="popular-posts-excerpt"><p>此文加密，请输入密码</p></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\archives\2932556.html" rel="bookmark">A Survey on Methods and Theories of Quantized Neural Networks</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\archives\fcc7e450.html" rel="bookmark">Error Compensated Quantized SGD and its Applications to Large-scale</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\archives\d06ef2e3.html" rel="bookmark">QSGD Communication-Efficient SGD via Gradient Quantization and Encoding</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\archives\493c0bc7.html" rel="bookmark">DOUBLESQUEEZE Parallel Stochastic Gradient Descent with Double-pass Error-Compensated Compression</a></div>
+    </li>
+  </ul>
+
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/img/wechatpay.jpg" alt="Jiyang 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/img/alipay.jpg" alt="Jiyang 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Jiyang
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://wjykl22.github.io/archives/5cf57987.html" title="分布式学习通信优化综述（2020香港大学）">https://wjykl22.github.io/archives/5cf57987.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener external nofollow noreferrer" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"># 分布式机器学习</a>
+              <a href="/tags/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/" rel="tag"># 通信优化</a>
+              <a href="/tags/%E6%A2%AF%E5%BA%A6%E5%8E%8B%E7%BC%A9/" rel="tag"># 梯度压缩</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/d05bdbcf.html" rel="prev" title="Ray参数服务器性能测评实验">
+      <i class="fa fa-chevron-left"></i> Ray参数服务器性能测评实验
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/6fa57430.html" rel="next" title="2020.08.26小组汇报">
+      2020.08.26小组汇报 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+    
+
+            <ul class="sidebar-nav motion-element">
+              <li class="sidebar-nav-toc">
+                文章目录
+              </li>
+              <li class="sidebar-nav-overview">
+                站点概览
+              </li>
+            </ul>
+    
+
+
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#分布式学习分类"><span class="nav-text">分布式学习分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#通信同步和频次"><span class="nav-text">通信同步和频次</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#同步并行"><span class="nav-text">同步并行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#受限同步并行"><span class="nav-text">受限同步并行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#异步并行"><span class="nav-text">异步并行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#本地sgd"><span class="nav-text">本地SGD</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#中心化和去中心化架构"><span class="nav-text">中心化和去中心化架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#量化方法"><span class="nav-text">量化方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#方法一"><span class="nav-text">方法一</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方法二"><span class="nav-text">方法二</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方法三"><span class="nav-text">方法三</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方法四"><span class="nav-text">方法四</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方法五"><span class="nav-text">方法五</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方法六"><span class="nav-text">方法六</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方法七"><span class="nav-text">方法七</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方法八"><span class="nav-text">方法八</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#稀疏化方法"><span class="nav-text">稀疏化方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#计算和通信流水线调度"><span class="nav-text">计算和通信流水线调度</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#未来优化方向"><span class="nav-text">未来优化方向</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献"><span class="nav-text">参考文献</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jiyang"
+      src="/img/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Jiyang</p>
+  <div class="site-description" itemprop="description">世界上有两样东西不可直视，一是太阳，二是人心</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">19</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/wjykl22" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;wjykl22" rel="noopener external nofollow noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:wjykl22@gmail.com" title="E-Mail → mailto:wjykl22@gmail.com" rel="noopener external nofollow noreferrer" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+    <div class="links-of-blogroll motion-element links-of-blogroll-block">
+      <div class="links-of-blogroll-title">
+        <!-- modify icon to fire by szw -->
+        <i class="fa fa-history fa-" aria-hidden="true"></i>
+        近期文章
+      </div>
+      <ul class="links-of-blogroll-list">
+        
+        
+          <li>
+            <a href="/archives/6fa57430.html" title="2020.08.26小组汇报" target="_blank">2020.08.26小组汇报</a>
+          </li>
+        
+          <li>
+            <a href="/archives/5cf57987.html" title="分布式学习通信优化综述（2020香港大学）" target="_blank">分布式学习通信优化综述（2020香港大学）</a>
+          </li>
+        
+          <li>
+            <a href="/archives/d05bdbcf.html" title="Ray参数服务器性能测评实验" target="_blank">Ray参数服务器性能测评实验</a>
+          </li>
+        
+          <li>
+            <a href="/archives/71d33514.html" title="Konga前端修改设计调研" target="_blank">Konga前端修改设计调研</a>
+          </li>
+        
+          <li>
+            <a href="/archives/d34fba27.html" title="LAQ和LAG代码研读" target="_blank">LAQ和LAG代码研读</a>
+          </li>
+        
+      </ul>
+    </div>
+
+
+      </div>
+      <div style="">
+  <canvas id="canvas" style="width:60%;">当前浏览器不支持canvas，请更换浏览器后再试</canvas>
+</div>
+<script>
+(function(){
+
+   var digit=
+    [
+        [
+            [0,0,1,1,1,0,0],
+            [0,1,1,0,1,1,0],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [0,1,1,0,1,1,0],
+            [0,0,1,1,1,0,0]
+        ],//0
+        [
+            [0,0,0,1,1,0,0],
+            [0,1,1,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [1,1,1,1,1,1,1]
+        ],//1
+        [
+            [0,1,1,1,1,1,0],
+            [1,1,0,0,0,1,1],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,1,1,0],
+            [0,0,0,1,1,0,0],
+            [0,0,1,1,0,0,0],
+            [0,1,1,0,0,0,0],
+            [1,1,0,0,0,0,0],
+            [1,1,0,0,0,1,1],
+            [1,1,1,1,1,1,1]
+        ],//2
+        [
+            [1,1,1,1,1,1,1],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,1,1,0],
+            [0,0,0,1,1,0,0],
+            [0,0,1,1,1,0,0],
+            [0,0,0,0,1,1,0],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [0,1,1,1,1,1,0]
+        ],//3
+        [
+            [0,0,0,0,1,1,0],
+            [0,0,0,1,1,1,0],
+            [0,0,1,1,1,1,0],
+            [0,1,1,0,1,1,0],
+            [1,1,0,0,1,1,0],
+            [1,1,1,1,1,1,1],
+            [0,0,0,0,1,1,0],
+            [0,0,0,0,1,1,0],
+            [0,0,0,0,1,1,0],
+            [0,0,0,1,1,1,1]
+        ],//4
+        [
+            [1,1,1,1,1,1,1],
+            [1,1,0,0,0,0,0],
+            [1,1,0,0,0,0,0],
+            [1,1,1,1,1,1,0],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [0,1,1,1,1,1,0]
+        ],//5
+        [
+            [0,0,0,0,1,1,0],
+            [0,0,1,1,0,0,0],
+            [0,1,1,0,0,0,0],
+            [1,1,0,0,0,0,0],
+            [1,1,0,1,1,1,0],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [0,1,1,1,1,1,0]
+        ],//6
+        [
+            [1,1,1,1,1,1,1],
+            [1,1,0,0,0,1,1],
+            [0,0,0,0,1,1,0],
+            [0,0,0,0,1,1,0],
+            [0,0,0,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [0,0,1,1,0,0,0],
+            [0,0,1,1,0,0,0],
+            [0,0,1,1,0,0,0],
+            [0,0,1,1,0,0,0]
+        ],//7
+        [
+            [0,1,1,1,1,1,0],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [0,1,1,1,1,1,0],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [0,1,1,1,1,1,0]
+        ],//8
+        [
+            [0,1,1,1,1,1,0],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [0,1,1,1,0,1,1],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,1,1,0],
+            [0,0,0,1,1,0,0],
+            [0,1,1,0,0,0,0]
+        ],//9
+        [
+            [0,0,0,0,0,0,0],
+            [0,0,1,1,1,0,0],
+            [0,0,1,1,1,0,0],
+            [0,0,1,1,1,0,0],
+            [0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0],
+            [0,0,1,1,1,0,0],
+            [0,0,1,1,1,0,0],
+            [0,0,1,1,1,0,0],
+            [0,0,0,0,0,0,0]
+        ]//:
+    ];
+
+var canvas = document.getElementById('canvas');
+
+if(canvas.getContext){
+    var cxt = canvas.getContext('2d');
+    //声明canvas的宽高
+    var H = 100,W = 700;
+    canvas.height = H;
+    canvas.width = W;
+    cxt.fillStyle = '#f00';
+    cxt.fillRect(10,10,50,50);
+
+    //存储时间数据
+    var data = [];
+    //存储运动的小球
+    var balls = [];
+    //设置粒子半径
+    var R = canvas.height/20-1;
+    (function(){
+        var temp = /(\d)(\d):(\d)(\d):(\d)(\d)/.exec(new Date());
+        //存储时间数字，由十位小时、个位小时、冒号、十位分钟、个位分钟、冒号、十位秒钟、个位秒钟这7个数字组成
+        data.push(temp[1],temp[2],10,temp[3],temp[4],10,temp[5],temp[6]);
+    })();
+
+    /*生成点阵数字*/
+    function renderDigit(index,num){
+        for(var i = 0; i < digit[num].length; i++){
+            for(var j = 0; j < digit[num][i].length; j++){
+                if(digit[num][i][j] == 1){
+                    cxt.beginPath();
+                    cxt.arc(14*(R+2)*index + j*2*(R+1)+(R+1),i*2*(R+1)+(R+1),R,0,2*Math.PI);
+                    cxt.closePath();
+                    cxt.fill();
+                }
+            }
+        }
+    }
+
+    /*更新时钟*/
+    function updateDigitTime(){
+        var changeNumArray = [];
+        var temp = /(\d)(\d):(\d)(\d):(\d)(\d)/.exec(new Date());
+        var NewData = [];
+        NewData.push(temp[1],temp[2],10,temp[3],temp[4],10,temp[5],temp[6]);
+        for(var i = data.length-1; i >=0 ; i--){
+            //时间发生变化
+            if(NewData[i] !== data[i]){
+                //将变化的数字值和在data数组中的索引存储在changeNumArray数组中
+                changeNumArray.push(i+'_'+(Number(data[i])+1)%10);
+            }
+        }
+        //增加小球
+        for(var i = 0; i< changeNumArray.length; i++){
+            addBalls.apply(this,changeNumArray[i].split('_'));
+        }
+        data = NewData.concat();
+    }
+
+    /*更新小球状态*/
+    function updateBalls(){
+        for(var i = 0; i < balls.length; i++){
+            balls[i].stepY += balls[i].disY;
+            balls[i].x += balls[i].stepX;
+            balls[i].y += balls[i].stepY;
+            if(balls[i].x > W + R || balls[i].y > H + R){
+                balls.splice(i,1);
+                i--;
+            }
+        }
+    }
+
+    /*增加要运动的小球*/
+    function addBalls(index,num){
+        var numArray = [1,2,3];
+        var colorArray =  ["#3BE","#09C","#A6C","#93C","#9C0","#690","#FB3","#F80","#F44","#C00"];
+        for(var i = 0; i < digit[num].length; i++){
+            for(var j = 0; j < digit[num][i].length; j++){
+                if(digit[num][i][j] == 1){
+                    var ball = {
+                        x:14*(R+2)*index + j*2*(R+1)+(R+1),
+                        y:i*2*(R+1)+(R+1),
+                        stepX:Math.floor(Math.random() * 4 -2),
+                        stepY:-2*numArray[Math.floor(Math.random()*numArray.length)],
+                        color:colorArray[Math.floor(Math.random()*colorArray.length)],
+                        disY:1
+                    };
+                    balls.push(ball);
+                }
+            }
+        }
+    }
+
+    /*渲染*/
+    function render(){
+        //重置画布宽度，达到清空画布的效果
+        canvas.height = 100;
+        //渲染时钟
+        for(var i = 0; i < data.length; i++){
+            renderDigit(i,data[i]);
+        }
+        //渲染小球
+        for(var i = 0; i < balls.length; i++){
+            cxt.beginPath();
+            cxt.arc(balls[i].x,balls[i].y,R,0,2*Math.PI);
+            cxt.fillStyle = balls[i].color;
+            cxt.closePath();
+            cxt.fill();
+        }
+    }
+
+    clearInterval(oTimer);
+    var oTimer = setInterval(function(){
+        //更新时钟
+        updateDigitTime();
+        //更新小球状态
+        updateBalls();
+        //渲染
+        render();
+    },50);
+}
+
+})();
+</script>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-eye"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jiyang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">248k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:45</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener external nofollow noreferrer" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'owd5pfJvVjoBkwE0F3w7Oqc5-gzGzoHsz',
+      appKey     : 'pQbK5JId2AmEfxG3oSiFXAFP',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

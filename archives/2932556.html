@@ -24,7 +24,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="A Survey on Methods and Theories of Quantized Neural Networks">
 <meta property="og:url" content="https://wjykl22.github.io/archives/2932556.html">
-<meta property="og:site_name" content="汝穿如衣">
+<meta property="og:site_name" content="韭零后">
 <meta property="og:description" content="摘要 当下流行的深度神经网络具有非常复杂的结构，训练时需要消耗大量的内存和电源；在移动端和边缘设备等资源限制的情况下难以发挥作用，而量化则是解决上述问题的办法之一。原来的神经网络权重、激活和梯度都需要采用\(32bit\)精度的浮点表示，但是采用量化表示只需要整型或者二进制即可，大大减少了模型尺寸和资源消耗。这是一篇综述，从不同方面给出了量化神经网络的一些方法，同时也罗列了目前在这些方面遇到的挑">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://wjykl22.github.io/archives/2932556/image-20200729203114640.png">
@@ -50,7 +50,7 @@
   };
 </script>
 
-  <title>A Survey on Methods and Theories of Quantized Neural Networks | 汝穿如衣</title>
+  <title>A Survey on Methods and Theories of Quantized Neural Networks | 韭零后</title>
   
 
 
@@ -81,7 +81,7 @@
   </style>
 </noscript>
 
-<link rel="alternate" href="/atom.xml" title="汝穿如衣" type="application/atom+xml">
+<link rel="alternate" href="/atom.xml" title="韭零后" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
@@ -102,10 +102,10 @@
 
     <a href="/" class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">汝穿如衣</h1>
+      <h1 class="site-title">韭零后</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
-      <p class="site-subtitle" itemprop="description">subtitle</p>
+      <p class="site-subtitle" itemprop="description">公元1996 - ?</p>
   </div>
 
   <div class="site-nav-right">
@@ -219,7 +219,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="汝穿如衣">
+      <meta itemprop="name" content="韭零后">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -276,13 +276,6 @@
               </span>
               <span class="post-meta-item-text">阅读次数：</span>
               <span class="leancloud-visitors-count"></span>
-            </span>
-            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span id="busuanzi_value_page_pv"></span>
             </span>
   
   <span class="post-meta-item">
@@ -516,8 +509,7 @@ r_{o}=\frac{1}{2^{k}-1} \operatorname{round}\left(\left(2^{k}-1\right) r_{i}\rig
       <div class="popular-posts-title"><a href="\archives\493c0bc7.html" rel="bookmark">DOUBLESQUEEZE Parallel Stochastic Gradient Descent with Double-pass Error-Compensated Compression</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\archives\d34fba27.html" rel="bookmark">LAQ和LAG代码研读</a></div>
-        <div class="popular-posts-excerpt"><p>此文加密，请输入密码</p></div>
+      <div class="popular-posts-title"><a href="\archives\5cf57987.html" rel="bookmark">分布式学习通信优化综述（2020香港大学）</a></div>
     </li>
   </ul>
 
@@ -626,19 +618,23 @@ r_{o}=\frac{1}{2^{k}-1} \operatorname{round}\left(\left(2^{k}-1\right) r_{i}\rig
 
   <aside class="sidebar">
     <div class="sidebar-inner">
+    
 
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
+            <ul class="sidebar-nav motion-element">
+              <li class="sidebar-nav-toc">
+                文章目录
+              </li>
+              <li class="sidebar-nav-overview">
+                站点概览
+              </li>
+            </ul>
+    
+
+
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#摘要"><span class="nav-number">1.</span> <span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#介绍"><span class="nav-number">2.</span> <span class="nav-text">介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#神经网络"><span class="nav-number">2.1.</span> <span class="nav-text">神经网络</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#前馈神经网络"><span class="nav-number">2.1.1.</span> <span class="nav-text">前馈神经网络</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#卷积神经网络"><span class="nav-number">2.1.2.</span> <span class="nav-text">卷积神经网络</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#循环神经网络和lstm"><span class="nav-number">2.1.3.</span> <span class="nav-text">循环神经网络和LSTM</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#量化神经网络"><span class="nav-number">2.2.</span> <span class="nav-text">量化神经网络</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#术语介绍"><span class="nav-number">2.2.1.</span> <span class="nav-text">术语介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#正文"><span class="nav-number">2.2.2.</span> <span class="nav-text">正文</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#量化技术"><span class="nav-number">3.</span> <span class="nav-text">量化技术</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#确定性量化"><span class="nav-number">3.1.</span> <span class="nav-text">确定性量化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#取整rounding"><span class="nav-number">3.1.1.</span> <span class="nav-text">取整（Rounding）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#主要内容"><span class="nav-number">3.1.1.1.</span> <span class="nav-text">主要内容</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#挑战"><span class="nav-number">3.1.1.2.</span> <span class="nav-text">挑战</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#向量量化"><span class="nav-number">3.1.2.</span> <span class="nav-text">向量量化</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#挑战-1"><span class="nav-number">3.1.2.1.</span> <span class="nav-text">挑战</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#量化最优化"><span class="nav-number">3.1.3.</span> <span class="nav-text">量化最优化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#随机量化"><span class="nav-number">3.2.</span> <span class="nav-text">随机量化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#随机舍入法random-rounding"><span class="nav-number">3.2.1.</span> <span class="nav-text">随机舍入法（Random Rounding）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#挑战-2"><span class="nav-number">3.2.1.1.</span> <span class="nav-text">挑战</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#概率量化"><span class="nav-number">3.2.2.</span> <span class="nav-text">概率量化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#讨论"><span class="nav-number">3.2.3.</span> <span class="nav-text">讨论</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#量化对象分类"><span class="nav-number">4.</span> <span class="nav-text">量化对象分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#权重量化"><span class="nav-number">4.1.</span> <span class="nav-text">权重量化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#梯度量化"><span class="nav-number">4.2.</span> <span class="nav-text">梯度量化</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#挑战-3"><span class="nav-number">4.2.0.1.</span> <span class="nav-text">挑战</span></a></li></ol></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#摘要"><span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#介绍"><span class="nav-text">介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#神经网络"><span class="nav-text">神经网络</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#前馈神经网络"><span class="nav-text">前馈神经网络</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#卷积神经网络"><span class="nav-text">卷积神经网络</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#循环神经网络和lstm"><span class="nav-text">循环神经网络和LSTM</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#量化神经网络"><span class="nav-text">量化神经网络</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#术语介绍"><span class="nav-text">术语介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#正文"><span class="nav-text">正文</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#量化技术"><span class="nav-text">量化技术</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#确定性量化"><span class="nav-text">确定性量化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#取整rounding"><span class="nav-text">取整（Rounding）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#主要内容"><span class="nav-text">主要内容</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#挑战"><span class="nav-text">挑战</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#向量量化"><span class="nav-text">向量量化</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#挑战-1"><span class="nav-text">挑战</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#量化最优化"><span class="nav-text">量化最优化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#随机量化"><span class="nav-text">随机量化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#随机舍入法random-rounding"><span class="nav-text">随机舍入法（Random Rounding）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#挑战-2"><span class="nav-text">挑战</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#概率量化"><span class="nav-text">概率量化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#讨论"><span class="nav-text">讨论</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#量化对象分类"><span class="nav-text">量化对象分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#权重量化"><span class="nav-text">权重量化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#梯度量化"><span class="nav-text">梯度量化</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#挑战-3"><span class="nav-text">挑战</span></a></li></ol></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -653,18 +649,18 @@ r_{o}=\frac{1}{2^{k}-1} \operatorname{round}\left(\left(2^{k}-1\right) r_{i}\rig
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-count">19</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
-        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-count">16</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -690,6 +686,14 @@ r_{o}=\frac{1}{2^{k}-1} \operatorname{round}\left(\left(2^{k}-1\right) r_{i}\rig
         
         
           <li>
+            <a href="/archives/6fa57430.html" title="2020.08.26小组汇报" target="_blank">2020.08.26小组汇报</a>
+          </li>
+        
+          <li>
+            <a href="/archives/5cf57987.html" title="分布式学习通信优化综述（2020香港大学）" target="_blank">分布式学习通信优化综述（2020香港大学）</a>
+          </li>
+        
+          <li>
             <a href="/archives/d05bdbcf.html" title="Ray参数服务器性能测评实验" target="_blank">Ray参数服务器性能测评实验</a>
           </li>
         
@@ -699,14 +703,6 @@ r_{o}=\frac{1}{2^{k}-1} \operatorname{round}\left(\left(2^{k}-1\right) r_{i}\rig
         
           <li>
             <a href="/archives/d34fba27.html" title="LAQ和LAG代码研读" target="_blank">LAQ和LAG代码研读</a>
-          </li>
-        
-          <li>
-            <a href="/archives/11684b86.html" title="平头、乌鸦和士兵" target="_blank">平头、乌鸦和士兵</a>
-          </li>
-        
-          <li>
-            <a href="/archives/70896bd9.html" title="孕线与十字孕线、启明星与黄昏线" target="_blank">孕线与十字孕线、启明星与黄昏线</a>
           </li>
         
       </ul>
@@ -1006,13 +1002,13 @@ if(canvas.getContext){
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">233k</span>
+    <span title="站点总字数">248k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">3:32</span>
+    <span title="站点阅读时长">3:45</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener external nofollow noreferrer" target="_blank">NexT.Gemini</a> 强力驱动
   </div>

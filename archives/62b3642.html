@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=EB Garamond:300,300italic,400,400italic,700,700italic|Cinzel Decorative:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wjykl22.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="题目：深度神经网络的数据和模型并行性 英文：Beyond Data and Model Parallelism for Deep Neural Networks 作者：Zhihao Jia 斯坦福大学  摘要 本文定义了一种更宽泛的DNN并行搜索策略，称为SOAP，它将从样本（Sample），操作（Opration）、属性（Attribute）以及参数（Parameter）这四个维度">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Beyond Data and Model Parallelism for Deep Neural Networks">
+<meta property="og:url" content="https://wjykl22.github.io/archives/62b3642.html">
+<meta property="og:site_name" content="韭零后">
+<meta property="og:description" content="题目：深度神经网络的数据和模型并行性 英文：Beyond Data and Model Parallelism for Deep Neural Networks 作者：Zhihao Jia 斯坦福大学  摘要 本文定义了一种更宽泛的DNN并行搜索策略，称为SOAP，它将从样本（Sample），操作（Opration）、属性（Attribute）以及参数（Parameter）这四个维度">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wjykl22.github.io/archives/62b3642/image-20200910084035262.png">
+<meta property="article:published_time" content="2020-09-09T12:29:02.000Z">
+<meta property="article:modified_time" content="2020-09-10T01:16:29.263Z">
+<meta property="article:author" content="Jiyang">
+<meta property="article:tag" content="分布式机器学习">
+<meta property="article:tag" content="科研">
+<meta property="article:tag" content="数据并行">
+<meta property="article:tag" content="模型并行">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wjykl22.github.io/archives/62b3642/image-20200910084035262.png">
+
+<link rel="canonical" href="https://wjykl22.github.io/archives/62b3642.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Beyond Data and Model Parallelism for Deep Neural Networks | 韭零后</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="韭零后" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">韭零后</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">公元1996 - ?</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-主页">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>主页</a>
+
+  </li>
+        <li class="menu-item menu-item-关于">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-标签">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-目录">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>目录</a>
+
+  </li>
+        <li class="menu-item menu-item-结构">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>结构</a>
+
+  </li>
+        <li class="menu-item menu-item-站点地图">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-公益">
+
+    <a href="/404.html" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wjykl22.github.io/archives/62b3642.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/avatar.jpg">
+      <meta itemprop="name" content="Jiyang">
+      <meta itemprop="description" content="世界上有两样东西不可直视，一是太阳，二是人心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="韭零后">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Beyond Data and Model Parallelism for Deep Neural Networks
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-09 20:29:02" itemprop="dateCreated datePublished" datetime="2020-09-09T20:29:02+08:00">2020-09-09</time>
+            </span>
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-10 09:16:29" itemprop="dateModified" datetime="2020-09-10T09:16:29+08:00">2020-09-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%A7%91%E7%A0%94/" itemprop="url" rel="index"><span itemprop="name">科研</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">分布式机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">论文阅读笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/archives/62b3642.html" class="post-meta-item leancloud_visitors" data-flag-title="Beyond Data and Model Parallelism for Deep Neural Networks" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/archives/62b3642.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/62b3642.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <ul>
+<li><p>题目：深度神经网络的数据和模型并行性</p>
+<p>英文：<a href="https://arxiv.org/pdf/1807.05358" target="_blank" rel="noopener external nofollow noreferrer">Beyond Data and Model Parallelism for Deep Neural Networks</a></p></li>
+<li><p>作者：Zhihao Jia 斯坦福大学</p></li>
+</ul>
+<h2 id="摘要">摘要</h2>
+<p>本文定义了一种更宽泛的DNN并行搜索策略，称为SOAP，它将从样本（Sample），操作（Opration）、属性（Attribute）以及参数（Parameter）这四个维度对最优的并行策略进行探索和优化。同时本文还提出了FlexFlow，在SOAP范围内随机搜索并行策略的方法。为了加速搜索，FlexFlow提出了一种新的执行模拟器，比需要对每种并行策略都执行一遍的这类方法速度提高了三个数量级。</p>
+<h2 id="相关工作">相关工作</h2>
+<h3 id="数据并行data-parallelism">数据并行（data parallelism）</h3>
+<p>对于参数较少，且计算集中DNN操作的有较高的性能，但是对于具有大量参数的操作性能次优（例如：矩阵乘法）。</p>
+<p>数据并行[28]广泛应用于现有的深度学习系统（例如：Tensorflow、Caffe2以及Pytorch），但数据并行需要在每个工作节点上都复制一份完整网络，在参数量较大的情况下将成为性能瓶颈。</p>
+<h3 id="模型并行model-parallelism">模型并行（model parallelism）</h3>
+<p>模型并行[15]消除了参数在设备之间同步的开销，但是需要在操作时的数据转换，并且不允许内部操作并行化。</p>
+<h3 id="专门设计策略expert-desgned-strategies">专门设计策略（expert-desgned strategies）</h3>
+<p>根据程序员的经验和知识手动优化并行策略，例如[27] [42]对卷积层和池化层采用数据并行，对全连接层转换为模型并行加速训练卷积神经网络。这样的方法相比于数据和模型并行提高了性能，但是依然是次优的。</p>
+<h3 id="自动化并行策略">自动化并行策略</h3>
+<p>在特定的搜索域内自动化寻找最优的并行策略，例如REINFORCE采用强化学习模型在实际设备上运行不同策略来为模型并行学习得到高效操作策略。但是该方法通过对每种并行策略执行一次迭代来衡量执行时间的方式依然非常低效。再比如OptCNN[25]为DNN的并行化设计线性图，自动找到在每个DNN操作中利用并行性的策略。</p>
+<p>现有的自动化框架只是探究了不同操作的并行化（例如REINFORCE[33]）或者在单个操作中的并行（例如OptCNN），忽略了在两个维度上都使用并行性的更快策略。</p>
+<p>下表概括了现有方法的并行维度，和这些方法相比，FlexFlow考虑了更多的维度，通常更有效的策略是并行化单个操作。</p>
+<h3 id="基于图的集群调度">基于图的集群调度</h3>
+<p>Quincy将任务调度映射到流网络，并使用最小代价最大流(MCMF)算法来找到有效的任务分配；Firmament使用多种MCMF优化算法对Quincy进行了推广，减少了任务放置的延迟。现有的基于图的调度是在任务图是固定的假设之下的，然而，FlexFlow解决了一个不同的问题，即需要联合优化如何利用SOAP维中的并行性将操作划分为任务，以及如何将任务分配给设备。</p>
+<h2 id="主要贡献">主要贡献</h2>
+<ol type="1">
+<li>为并行DNN应用定义了SOAP搜索空间，它包括了样本（Sample），操作（Opration）、属性（Attribute）以及参数（Parameter）这四个维度下的并行策略。</li>
+<li>在合理假设下，DNN的并行仿真所用时间比DNN直接在真实硬件系统下运行时间少三个数量级</li>
+<li>描述了FlexFlow框架，能够从SOAP空间寻找并行执行策略，从而加速DNN训练</li>
+<li>FlewFlow与现有框架相比，能够提升3.8倍的训练吞吐量，并且提升了可扩展性。</li>
+</ol>
+<h2 id="架构概述">架构概述</h2>
+<p>和现有的学习系统相似，FlexFlow采用操作图<span class="math inline">\(\mathcal{G}\)</span>描述所有的DNN操作和状态。每个节点<span class="math inline">\(o_{i} \in \mathcal{G}\)</span>都表示一个操作（例如：矩阵乘法和卷积等），每个边<span class="math inline">\((o_i, o_j) \in \mathcal{G}\)</span>表示输出<span class="math inline">\(o_i\)</span>和输入<span class="math inline">\(o_j\)</span>的张量。FlexFlow将设备拓扑结构记为<span class="math inline">\(\mathcal{D} = \left(\mathcal{D}_{N}, \mathcal{D}_{E}\right)\)</span>，描述了所有可能的硬件设备和它们的内在联系，如下图所示。每个节点<span class="math inline">\(d_{i} \in \mathcal{D}_{N}\)</span>代表设备（例如CPU或者是GPU），每条边<span class="math inline">\(\left(d_{i}, d_{j}\right) \in \mathcal{D}_{E}\)</span>代表硬件之间的连接（例如NVLink, PCI-e或者是网络连接）。每条边都标注有带宽或者延迟。FlexFlow会为操作图和设备拓扑找到一个并行策略，对比现有的框架，FlexFlow具有如下优点：</p>
+<ol type="1">
+<li>可编程性：对于在拓扑结构非常深的集群上运行的复杂操作图，设计高效的操作是非常困难的，FlexFlow可以找到高效的并行策略，并提供更加丰富的可编程接口。</li>
+<li>可移植性，一种并行策略在一个集群中适用，但在别的集群中是不适用的，而然，FlewFlow可以自动根据集群中硬件的配置，根据应用特点自动寻找适合的并行策略。</li>
+</ol>
+<p><img src="/archives/62b3642/image-20200910084035262.png" alt="image-20200910084035262" style="zoom: 80%;"></p>
+<h4 id="flexflow架构">FlexFlow架构</h4>
+<p>其架构主要如上图所示，FlexFlow的执行优化器（Execution Optimizer）将操作图和设备拓扑作为输入，自动生成高效的并行策略。优化器采用MCMC蒙特卡罗搜索方法，找到可能存在的并行策略空间，迭代地找出候选策略并交给执行仿真器（Execution Simulator）。执行仿真采用三角执行算法（delta simulation algorithm）使用对以前模拟的增量更新来模拟新的策略。模拟的执行时间指导搜索生成未来候选人，当搜索时间预算好景，执行优化器将发现的最佳策略发送到分布式运行（Distributed Runtime），来执行实际的并行程序。</p>
+<h4 id="局限性">局限性</h4>
+<p>该方式最大的局限性在于假设每个操作的执行时间是可预测的，并且和输入样本是独立的。因此该方法并不适用于执行时间和输入样本相关的应用。然而DNN应用是满足该要求的。并且乘法运算的执行时间是高度独立且可预测的。</p>
+<blockquote>
+<p>以上是初步的阅读，未完...</p>
+</blockquote>
+<div id="refer-anchor-1">
+
+</div>
+<ul>
+<li>[1] <a href="http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf" target="_blank" rel="noopener external nofollow noreferrer">Krizhevsky A, Sutskever I, Hinton G E. Imagenet classification with deep convolutional neural networks[C]//Advances in neural information processing systems. 2012: 1097-1105.</a>
+<div id="refer-anchor-2">
+
+</div></li>
+<li>[2] <a href="http://papers.nips.cc/paper/4687-large-scale-distributed-deep-networks.pdf" target="_blank" rel="noopener external nofollow noreferrer">Dean J, Corrado G, Monga R, et al. Large scale distributed deep networks[C]//Advances in neural information processing systems. 2012: 1223-1231.</a>
+<div id="refer-anchor-3">
+
+</div></li>
+<li>[3] <a href="https://arxiv.org/pdf/1404.5997" target="_blank" rel="noopener external nofollow noreferrer">Krizhevsky A. One weird trick for parallelizing convolutional neural networks[J]. arXiv preprint arXiv:1404.5997, 2014.</a>
+<div id="refer-anchor-4">
+
+</div></li>
+<li>[4] <a href="https://arxiv.org/pdf/1609.08144.pdf%20(7)" target="_blank" rel="noopener external nofollow noreferrer">Wu Y, Schuster M, Chen Z, et al. Google's neural machine translation system: Bridging the gap between human and machine translation[J]. arXiv preprint arXiv:1609.08144, 2016.</a>
+<div id="refer-anchor-5">
+
+</div></li>
+<li>[5] <a href="https://arxiv.org/abs/1802.04924" target="_blank" rel="noopener external nofollow noreferrer">Jia Z, Lin S, Qi C R, et al. Exploring hidden dimensions in parallelizing convolutional neural networks[J]. arXiv preprint arXiv:1802.04924, 2018.</a>
+<div id="refer-anchor-6">
+
+</div></li>
+<li>[6] <a href="https://patentimages.storage.googleapis.com/2b/03/41/324a4ae429b203/US10692003.pdf" target="_blank" rel="noopener external nofollow noreferrer">Mirhoseini A, Pham H, Le Q V, et al. Device placement optimization with reinforcement learning[J]. arXiv preprint arXiv:1706.04972, 2017.</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章推荐</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\archives\40cbe9ff.html" rel="bookmark">Device Placement Optimization with Reinforcement Learning</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\archives\6fa57430.html" rel="bookmark">2020.08.26小组汇报</a></div>
+        <div class="popular-posts-excerpt"><p>此文加密，请输入密码</p></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\archives\d05bdbcf.html" rel="bookmark">Ray参数服务器性能测评实验</a></div>
+        <div class="popular-posts-excerpt"><p>有东西被加密了, 请输入密码查看.</p></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\archives\d34fba27.html" rel="bookmark">LAQ和LAG代码研读</a></div>
+        <div class="popular-posts-excerpt"><p>此文加密，请输入密码</p></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\archives\88211b35.html" rel="bookmark">分布式机器学习量化通信综述</a></div>
+        <div class="popular-posts-excerpt"><p>此文加密，请输入密码</p></div>
+    </li>
+  </ul>
+
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/img/wechatpay.jpg" alt="Jiyang 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/img/alipay.jpg" alt="Jiyang 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Jiyang
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://wjykl22.github.io/archives/62b3642.html" title="Beyond Data and Model Parallelism for Deep Neural Networks">https://wjykl22.github.io/archives/62b3642.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener external nofollow noreferrer" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"># 分布式机器学习</a>
+              <a href="/tags/%E7%A7%91%E7%A0%94/" rel="tag"># 科研</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%B9%B6%E8%A1%8C/" rel="tag"># 数据并行</a>
+              <a href="/tags/%E6%A8%A1%E5%9E%8B%E5%B9%B6%E8%A1%8C/" rel="tag"># 模型并行</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/6fa57430.html" rel="prev" title="2020.08.26小组汇报">
+      <i class="fa fa-chevron-left"></i> 2020.08.26小组汇报
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/archives/60fdd68b.html" rel="next" title="Communication Optimal Parallel Multiplication of Sparse Random Matrices">
+      Communication Optimal Parallel Multiplication of Sparse Random Matrices <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+    
+
+            <ul class="sidebar-nav motion-element">
+              <li class="sidebar-nav-toc">
+                文章目录
+              </li>
+              <li class="sidebar-nav-overview">
+                站点概览
+              </li>
+            </ul>
+    
+
+
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#摘要"><span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相关工作"><span class="nav-text">相关工作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据并行data-parallelism"><span class="nav-text">数据并行（data parallelism）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#模型并行model-parallelism"><span class="nav-text">模型并行（model parallelism）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#专门设计策略expert-desgned-strategies"><span class="nav-text">专门设计策略（expert-desgned strategies）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自动化并行策略"><span class="nav-text">自动化并行策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于图的集群调度"><span class="nav-text">基于图的集群调度</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#主要贡献"><span class="nav-text">主要贡献</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#架构概述"><span class="nav-text">架构概述</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#flexflow架构"><span class="nav-text">FlexFlow架构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#局限性"><span class="nav-text">局限性</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jiyang"
+      src="/img/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Jiyang</p>
+  <div class="site-description" itemprop="description">世界上有两样东西不可直视，一是太阳，二是人心</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/wjykl22" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;wjykl22" rel="noopener external nofollow noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:wjykl22@gmail.com" title="E-Mail → mailto:wjykl22@gmail.com" rel="noopener external nofollow noreferrer" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+    <div class="links-of-blogroll motion-element links-of-blogroll-block">
+      <div class="links-of-blogroll-title">
+        <!-- modify icon to fire by szw -->
+        <i class="fa fa-history fa-" aria-hidden="true"></i>
+        近期文章
+      </div>
+      <ul class="links-of-blogroll-list">
+        
+        
+          <li>
+            <a href="/archives/40cbe9ff.html" title="Device Placement Optimization with Reinforcement Learning" target="_blank">Device Placement Optimization with Reinforcement Learning</a>
+          </li>
+        
+          <li>
+            <a href="/archives/60fdd68b.html" title="Communication Optimal Parallel Multiplication of Sparse Random Matrices" target="_blank">Communication Optimal Parallel Multiplication of Sparse Random Matrices</a>
+          </li>
+        
+          <li>
+            <a href="/archives/62b3642.html" title="Beyond Data and Model Parallelism for Deep Neural Networks" target="_blank">Beyond Data and Model Parallelism for Deep Neural Networks</a>
+          </li>
+        
+          <li>
+            <a href="/archives/6fa57430.html" title="2020.08.26小组汇报" target="_blank">2020.08.26小组汇报</a>
+          </li>
+        
+          <li>
+            <a href="/archives/5cf57987.html" title="分布式学习通信优化综述（2020香港大学）" target="_blank">分布式学习通信优化综述（2020香港大学）</a>
+          </li>
+        
+      </ul>
+    </div>
+
+
+      </div>
+      <div style="">
+  <canvas id="canvas" style="width:60%;">当前浏览器不支持canvas，请更换浏览器后再试</canvas>
+</div>
+<script>
+(function(){
+
+   var digit=
+    [
+        [
+            [0,0,1,1,1,0,0],
+            [0,1,1,0,1,1,0],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [0,1,1,0,1,1,0],
+            [0,0,1,1,1,0,0]
+        ],//0
+        [
+            [0,0,0,1,1,0,0],
+            [0,1,1,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [1,1,1,1,1,1,1]
+        ],//1
+        [
+            [0,1,1,1,1,1,0],
+            [1,1,0,0,0,1,1],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,1,1,0],
+            [0,0,0,1,1,0,0],
+            [0,0,1,1,0,0,0],
+            [0,1,1,0,0,0,0],
+            [1,1,0,0,0,0,0],
+            [1,1,0,0,0,1,1],
+            [1,1,1,1,1,1,1]
+        ],//2
+        [
+            [1,1,1,1,1,1,1],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,1,1,0],
+            [0,0,0,1,1,0,0],
+            [0,0,1,1,1,0,0],
+            [0,0,0,0,1,1,0],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [0,1,1,1,1,1,0]
+        ],//3
+        [
+            [0,0,0,0,1,1,0],
+            [0,0,0,1,1,1,0],
+            [0,0,1,1,1,1,0],
+            [0,1,1,0,1,1,0],
+            [1,1,0,0,1,1,0],
+            [1,1,1,1,1,1,1],
+            [0,0,0,0,1,1,0],
+            [0,0,0,0,1,1,0],
+            [0,0,0,0,1,1,0],
+            [0,0,0,1,1,1,1]
+        ],//4
+        [
+            [1,1,1,1,1,1,1],
+            [1,1,0,0,0,0,0],
+            [1,1,0,0,0,0,0],
+            [1,1,1,1,1,1,0],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [0,1,1,1,1,1,0]
+        ],//5
+        [
+            [0,0,0,0,1,1,0],
+            [0,0,1,1,0,0,0],
+            [0,1,1,0,0,0,0],
+            [1,1,0,0,0,0,0],
+            [1,1,0,1,1,1,0],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [0,1,1,1,1,1,0]
+        ],//6
+        [
+            [1,1,1,1,1,1,1],
+            [1,1,0,0,0,1,1],
+            [0,0,0,0,1,1,0],
+            [0,0,0,0,1,1,0],
+            [0,0,0,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [0,0,1,1,0,0,0],
+            [0,0,1,1,0,0,0],
+            [0,0,1,1,0,0,0],
+            [0,0,1,1,0,0,0]
+        ],//7
+        [
+            [0,1,1,1,1,1,0],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [0,1,1,1,1,1,0],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [0,1,1,1,1,1,0]
+        ],//8
+        [
+            [0,1,1,1,1,1,0],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [0,1,1,1,0,1,1],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,1,1,0],
+            [0,0,0,1,1,0,0],
+            [0,1,1,0,0,0,0]
+        ],//9
+        [
+            [0,0,0,0,0,0,0],
+            [0,0,1,1,1,0,0],
+            [0,0,1,1,1,0,0],
+            [0,0,1,1,1,0,0],
+            [0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0],
+            [0,0,1,1,1,0,0],
+            [0,0,1,1,1,0,0],
+            [0,0,1,1,1,0,0],
+            [0,0,0,0,0,0,0]
+        ]//:
+    ];
+
+var canvas = document.getElementById('canvas');
+
+if(canvas.getContext){
+    var cxt = canvas.getContext('2d');
+    //声明canvas的宽高
+    var H = 100,W = 700;
+    canvas.height = H;
+    canvas.width = W;
+    cxt.fillStyle = '#f00';
+    cxt.fillRect(10,10,50,50);
+
+    //存储时间数据
+    var data = [];
+    //存储运动的小球
+    var balls = [];
+    //设置粒子半径
+    var R = canvas.height/20-1;
+    (function(){
+        var temp = /(\d)(\d):(\d)(\d):(\d)(\d)/.exec(new Date());
+        //存储时间数字，由十位小时、个位小时、冒号、十位分钟、个位分钟、冒号、十位秒钟、个位秒钟这7个数字组成
+        data.push(temp[1],temp[2],10,temp[3],temp[4],10,temp[5],temp[6]);
+    })();
+
+    /*生成点阵数字*/
+    function renderDigit(index,num){
+        for(var i = 0; i < digit[num].length; i++){
+            for(var j = 0; j < digit[num][i].length; j++){
+                if(digit[num][i][j] == 1){
+                    cxt.beginPath();
+                    cxt.arc(14*(R+2)*index + j*2*(R+1)+(R+1),i*2*(R+1)+(R+1),R,0,2*Math.PI);
+                    cxt.closePath();
+                    cxt.fill();
+                }
+            }
+        }
+    }
+
+    /*更新时钟*/
+    function updateDigitTime(){
+        var changeNumArray = [];
+        var temp = /(\d)(\d):(\d)(\d):(\d)(\d)/.exec(new Date());
+        var NewData = [];
+        NewData.push(temp[1],temp[2],10,temp[3],temp[4],10,temp[5],temp[6]);
+        for(var i = data.length-1; i >=0 ; i--){
+            //时间发生变化
+            if(NewData[i] !== data[i]){
+                //将变化的数字值和在data数组中的索引存储在changeNumArray数组中
+                changeNumArray.push(i+'_'+(Number(data[i])+1)%10);
+            }
+        }
+        //增加小球
+        for(var i = 0; i< changeNumArray.length; i++){
+            addBalls.apply(this,changeNumArray[i].split('_'));
+        }
+        data = NewData.concat();
+    }
+
+    /*更新小球状态*/
+    function updateBalls(){
+        for(var i = 0; i < balls.length; i++){
+            balls[i].stepY += balls[i].disY;
+            balls[i].x += balls[i].stepX;
+            balls[i].y += balls[i].stepY;
+            if(balls[i].x > W + R || balls[i].y > H + R){
+                balls.splice(i,1);
+                i--;
+            }
+        }
+    }
+
+    /*增加要运动的小球*/
+    function addBalls(index,num){
+        var numArray = [1,2,3];
+        var colorArray =  ["#3BE","#09C","#A6C","#93C","#9C0","#690","#FB3","#F80","#F44","#C00"];
+        for(var i = 0; i < digit[num].length; i++){
+            for(var j = 0; j < digit[num][i].length; j++){
+                if(digit[num][i][j] == 1){
+                    var ball = {
+                        x:14*(R+2)*index + j*2*(R+1)+(R+1),
+                        y:i*2*(R+1)+(R+1),
+                        stepX:Math.floor(Math.random() * 4 -2),
+                        stepY:-2*numArray[Math.floor(Math.random()*numArray.length)],
+                        color:colorArray[Math.floor(Math.random()*colorArray.length)],
+                        disY:1
+                    };
+                    balls.push(ball);
+                }
+            }
+        }
+    }
+
+    /*渲染*/
+    function render(){
+        //重置画布宽度，达到清空画布的效果
+        canvas.height = 100;
+        //渲染时钟
+        for(var i = 0; i < data.length; i++){
+            renderDigit(i,data[i]);
+        }
+        //渲染小球
+        for(var i = 0; i < balls.length; i++){
+            cxt.beginPath();
+            cxt.arc(balls[i].x,balls[i].y,R,0,2*Math.PI);
+            cxt.fillStyle = balls[i].color;
+            cxt.closePath();
+            cxt.fill();
+        }
+    }
+
+    clearInterval(oTimer);
+    var oTimer = setInterval(function(){
+        //更新时钟
+        updateDigitTime();
+        //更新小球状态
+        updateBalls();
+        //渲染
+        render();
+    },50);
+}
+
+})();
+</script>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-eye"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jiyang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">256k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:52</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener external nofollow noreferrer" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'owd5pfJvVjoBkwE0F3w7Oqc5-gzGzoHsz',
+      appKey     : 'pQbK5JId2AmEfxG3oSiFXAFP',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

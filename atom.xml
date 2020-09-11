@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://wjykl22.github.io/"/>
-  <updated>2020-08-28T11:34:09.714Z</updated>
+  <updated>2020-09-11T02:42:10.330Z</updated>
   <id>https://wjykl22.github.io/</id>
   
   <author>
@@ -15,6 +15,110 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Device Placement Optimization with Reinforcement Learning</title>
+    <link href="https://wjykl22.github.io/archives/40cbe9ff.html"/>
+    <id>https://wjykl22.github.io/archives/40cbe9ff.html</id>
+    <published>2020-09-10T06:27:49.000Z</published>
+    <updated>2020-09-11T02:42:10.330Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;ul&gt;
+&lt;li&gt;&lt;p&gt;题目：使用强化学习进行设备配置&lt;/p&gt;
+&lt;p&gt;英文：&lt;a href=&quot;https://arxiv.org/abs/1706.04972&quot; target=&quot;_blank&quot; rel=&quot;noopener external nofollow
+        
+      
+    
+    </summary>
+    
+    
+      <category term="科研" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/"/>
+    
+      <category term="分布式机器学习" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="论文阅读笔记" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/"/>
+    
+    
+      <category term="分布式机器学习" scheme="https://wjykl22.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="科研" scheme="https://wjykl22.github.io/tags/%E7%A7%91%E7%A0%94/"/>
+    
+      <category term="数据并行" scheme="https://wjykl22.github.io/tags/%E6%95%B0%E6%8D%AE%E5%B9%B6%E8%A1%8C/"/>
+    
+      <category term="模型并行" scheme="https://wjykl22.github.io/tags/%E6%A8%A1%E5%9E%8B%E5%B9%B6%E8%A1%8C/"/>
+    
+      <category term="自动化并行策略" scheme="https://wjykl22.github.io/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E5%B9%B6%E8%A1%8C%E7%AD%96%E7%95%A5/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Communication Optimal Parallel Multiplication of Sparse Random Matrices</title>
+    <link href="https://wjykl22.github.io/archives/60fdd68b.html"/>
+    <id>https://wjykl22.github.io/archives/60fdd68b.html</id>
+    <published>2020-09-10T01:17:43.000Z</published>
+    <updated>2020-09-10T01:17:43.151Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          
+
+        
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Beyond Data and Model Parallelism for Deep Neural Networks</title>
+    <link href="https://wjykl22.github.io/archives/62b3642.html"/>
+    <id>https://wjykl22.github.io/archives/62b3642.html</id>
+    <published>2020-09-09T12:29:02.000Z</published>
+    <updated>2020-09-10T01:16:29.263Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;ul&gt;
+&lt;li&gt;&lt;p&gt;题目：深度神经网络的数据和模型并行性&lt;/p&gt;
+&lt;p&gt;英文：&lt;a href=&quot;https://arxiv.org/pdf/1807.05358&quot; target=&quot;_blank&quot; rel=&quot;noopener external nofollow
+        
+      
+    
+    </summary>
+    
+    
+      <category term="科研" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/"/>
+    
+      <category term="分布式机器学习" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="论文阅读笔记" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/"/>
+    
+    
+      <category term="分布式机器学习" scheme="https://wjykl22.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="科研" scheme="https://wjykl22.github.io/tags/%E7%A7%91%E7%A0%94/"/>
+    
+      <category term="数据并行" scheme="https://wjykl22.github.io/tags/%E6%95%B0%E6%8D%AE%E5%B9%B6%E8%A1%8C/"/>
+    
+      <category term="模型并行" scheme="https://wjykl22.github.io/tags/%E6%A8%A1%E5%9E%8B%E5%B9%B6%E8%A1%8C/"/>
+    
+  </entry>
   
   <entry>
     <title>2020.08.26小组汇报</title>
@@ -665,64 +769,6 @@
     </summary>
     
     
-    
-  </entry>
-  
-  <entry>
-    <title>DOUBLESQUEEZE Parallel Stochastic Gradient Descent with Double-pass Error-Compensated Compression</title>
-    <link href="https://wjykl22.github.io/archives/493c0bc7.html"/>
-    <id>https://wjykl22.github.io/archives/493c0bc7.html</id>
-    <published>2020-07-24T12:45:07.000Z</published>
-    <updated>2020-08-03T08:04:16.408Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h2
-        
-      
-    
-    </summary>
-    
-    
-      <category term="科研" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/"/>
-    
-      <category term="分布式机器学习" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
-    
-      <category term="通信优化" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/"/>
-    
-      <category term="梯度压缩" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/%E6%A2%AF%E5%BA%A6%E5%8E%8B%E7%BC%A9/"/>
-    
-    
-      <category term="分布式机器学习" scheme="https://wjykl22.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
-    
-      <category term="通信优化" scheme="https://wjykl22.github.io/tags/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/"/>
-    
-      <category term="梯度压缩" scheme="https://wjykl22.github.io/tags/%E6%A2%AF%E5%BA%A6%E5%8E%8B%E7%BC%A9/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>test</title>
-    <link href="https://wjykl22.github.io/archives/d87f7e0c.html"/>
-    <id>https://wjykl22.github.io/archives/d87f7e0c.html</id>
-    <published>2020-07-23T04:13:11.000Z</published>
-    <updated>2020-07-27T02:12:10.060Z</updated>
-    
-    <summary type="html">
-    
-      有东西被加密了，请输入密码查看
-    
-    </summary>
-    
-    
-      <category term="你好" scheme="https://wjykl22.github.io/categories/%E4%BD%A0%E5%A5%BD/"/>
-    
-    
-      <category term="hello" scheme="https://wjykl22.github.io/tags/hello/"/>
     
   </entry>
   

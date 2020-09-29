@@ -1,18 +1,18 @@
 ---
 title: Device Placement Optimization with Reinforcement Learning
 mathjax: true
-date: 2020-09-10 14:27:49
 tags:
-	- 分布式机器学习
-	- 数据并行
-	- 模型并行
-	- 科研
-	- 自动化并行策略
-categories:	
-	- 科研
-	- 分布式机器学习
-	- 论文阅读笔记
-
+  - 分布式机器学习
+  - 数据并行
+  - 模型并行
+  - 科研
+  - 自动化并行策略
+categories:
+  - 科研
+  - 分布式机器学习
+  - 论文阅读笔记
+abbrlink: 40cbe9ff
+date: 2020-09-10 14:27:49
 ---
 
 - 题目：使用强化学习进行设备配置

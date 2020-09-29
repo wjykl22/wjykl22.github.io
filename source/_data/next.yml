@@ -1065,3 +1065,19 @@ image_minifier:
 recent_posts_title: 近期文章
 recent_posts_layout: block
 recent_posts: true
+
+moon_menu:
+  back2top:
+    enable: true
+    icon: fa fa-chevron-up
+    func: back2top
+    order: -1
+  back2bottom:
+    enable: true
+    icon: fa fa-chevron-down
+    func: back2bottom
+    order: -2
+
+injector2:
+  stylus:
+    enable: true

@@ -1,0 +1,775 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>韭零后</title>
+  <icon>https://wjykl22.github.io/icon.png</icon>
+  <subtitle>公元1996 - ?</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="https://wjykl22.github.io/"/>
+  <updated>2020-09-11T02:50:47.502Z</updated>
+  <id>https://wjykl22.github.io/</id>
+  
+  <author>
+    <name>Jiyang</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Device Placement Optimization with Reinforcement Learning</title>
+    <link href="https://wjykl22.github.io/archives/40cbe9ff.html"/>
+    <id>https://wjykl22.github.io/archives/40cbe9ff.html</id>
+    <published>2020-09-10T06:27:49.000Z</published>
+    <updated>2020-09-11T02:50:47.502Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;ul&gt;
+&lt;li&gt;&lt;p&gt;题目：使用强化学习进行设备配置&lt;/p&gt;
+&lt;p&gt;英文：&lt;a href=&quot;https://arxiv.org/abs/1706.04972&quot; target=&quot;_blank&quot; rel=&quot;noopener external nofollow
+        
+      
+    
+    </summary>
+    
+    
+      <category term="科研" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/"/>
+    
+      <category term="分布式机器学习" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="论文阅读笔记" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/"/>
+    
+    
+      <category term="分布式机器学习" scheme="https://wjykl22.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="科研" scheme="https://wjykl22.github.io/tags/%E7%A7%91%E7%A0%94/"/>
+    
+      <category term="数据并行" scheme="https://wjykl22.github.io/tags/%E6%95%B0%E6%8D%AE%E5%B9%B6%E8%A1%8C/"/>
+    
+      <category term="模型并行" scheme="https://wjykl22.github.io/tags/%E6%A8%A1%E5%9E%8B%E5%B9%B6%E8%A1%8C/"/>
+    
+      <category term="自动化并行策略" scheme="https://wjykl22.github.io/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E5%B9%B6%E8%A1%8C%E7%AD%96%E7%95%A5/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Communication Optimal Parallel Multiplication of Sparse Random Matrices</title>
+    <link href="https://wjykl22.github.io/archives/60fdd68b.html"/>
+    <id>https://wjykl22.github.io/archives/60fdd68b.html</id>
+    <published>2020-09-10T01:17:43.000Z</published>
+    <updated>2020-09-11T02:50:47.496Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          
+
+        
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Beyond Data and Model Parallelism for Deep Neural Networks</title>
+    <link href="https://wjykl22.github.io/archives/62b3642.html"/>
+    <id>https://wjykl22.github.io/archives/62b3642.html</id>
+    <published>2020-09-09T12:29:02.000Z</published>
+    <updated>2020-09-11T02:50:47.490Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;ul&gt;
+&lt;li&gt;&lt;p&gt;题目：深度神经网络的数据和模型并行性&lt;/p&gt;
+&lt;p&gt;英文：&lt;a href=&quot;https://arxiv.org/pdf/1807.05358&quot; target=&quot;_blank&quot; rel=&quot;noopener external nofollow
+        
+      
+    
+    </summary>
+    
+    
+      <category term="科研" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/"/>
+    
+      <category term="分布式机器学习" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="论文阅读笔记" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/"/>
+    
+    
+      <category term="分布式机器学习" scheme="https://wjykl22.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="科研" scheme="https://wjykl22.github.io/tags/%E7%A7%91%E7%A0%94/"/>
+    
+      <category term="数据并行" scheme="https://wjykl22.github.io/tags/%E6%95%B0%E6%8D%AE%E5%B9%B6%E8%A1%8C/"/>
+    
+      <category term="模型并行" scheme="https://wjykl22.github.io/tags/%E6%A8%A1%E5%9E%8B%E5%B9%B6%E8%A1%8C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>2020.08.26小组汇报</title>
+    <link href="https://wjykl22.github.io/archives/6fa57430.html"/>
+    <id>https://wjykl22.github.io/archives/6fa57430.html</id>
+    <published>2020-08-26T08:10:11.000Z</published>
+    <updated>2020-08-28T11:34:09.714Z</updated>
+    
+    <summary type="html">
+    
+      此文加密，请输入密码
+    
+    </summary>
+    
+    
+      <category term="科研" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/"/>
+    
+      <category term="小组汇报" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%B0%8F%E7%BB%84%E6%B1%87%E6%8A%A5/"/>
+    
+    
+      <category term="分布式机器学习" scheme="https://wjykl22.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="科研" scheme="https://wjykl22.github.io/tags/%E7%A7%91%E7%A0%94/"/>
+    
+      <category term="同步并行（SGD）" scheme="https://wjykl22.github.io/tags/%E5%90%8C%E6%AD%A5%E5%B9%B6%E8%A1%8C%EF%BC%88SGD%EF%BC%89/"/>
+    
+      <category term="异步并行（ASGD）" scheme="https://wjykl22.github.io/tags/%E5%BC%82%E6%AD%A5%E5%B9%B6%E8%A1%8C%EF%BC%88ASGD%EF%BC%89/"/>
+    
+      <category term="加速比分析" scheme="https://wjykl22.github.io/tags/%E5%8A%A0%E9%80%9F%E6%AF%94%E5%88%86%E6%9E%90/"/>
+    
+      <category term="Ray" scheme="https://wjykl22.github.io/tags/Ray/"/>
+    
+      <category term="通信优化" scheme="https://wjykl22.github.io/tags/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/"/>
+    
+      <category term="梯度压缩" scheme="https://wjykl22.github.io/tags/%E6%A2%AF%E5%BA%A6%E5%8E%8B%E7%BC%A9/"/>
+    
+      <category term="小组汇报" scheme="https://wjykl22.github.io/tags/%E5%B0%8F%E7%BB%84%E6%B1%87%E6%8A%A5/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>分布式学习通信优化综述（2020香港大学）</title>
+    <link href="https://wjykl22.github.io/archives/5cf57987.html"/>
+    <id>https://wjykl22.github.io/archives/5cf57987.html</id>
+    <published>2020-08-26T06:13:54.000Z</published>
+    <updated>2020-08-28T11:30:10.385Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;综述名&lt;/strong&gt;：Communication-Efficient Distributed Deep Learning: A Comprehensive
+        
+      
+    
+    </summary>
+    
+    
+      <category term="科研" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/"/>
+    
+      <category term="分布式机器学习" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="通信优化" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/"/>
+    
+      <category term="梯度压缩" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/%E6%A2%AF%E5%BA%A6%E5%8E%8B%E7%BC%A9/"/>
+    
+    
+      <category term="分布式机器学习" scheme="https://wjykl22.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="通信优化" scheme="https://wjykl22.github.io/tags/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/"/>
+    
+      <category term="梯度压缩" scheme="https://wjykl22.github.io/tags/%E6%A2%AF%E5%BA%A6%E5%8E%8B%E7%BC%A9/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Ray参数服务器性能测评实验</title>
+    <link href="https://wjykl22.github.io/archives/d05bdbcf.html"/>
+    <id>https://wjykl22.github.io/archives/d05bdbcf.html</id>
+    <published>2020-08-13T02:53:16.000Z</published>
+    <updated>2020-08-28T11:39:01.987Z</updated>
+    
+    <summary type="html">
+    
+      有东西被加密了, 请输入密码查看.
+    
+    </summary>
+    
+    
+      <category term="科研" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/"/>
+    
+      <category term="分布式机器学习" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="分布式框架" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%88%86%E5%B8%83%E5%BC%8F%E6%A1%86%E6%9E%B6/"/>
+    
+    
+      <category term="分布式机器学习" scheme="https://wjykl22.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="科研" scheme="https://wjykl22.github.io/tags/%E7%A7%91%E7%A0%94/"/>
+    
+      <category term="同步并行（SGD）" scheme="https://wjykl22.github.io/tags/%E5%90%8C%E6%AD%A5%E5%B9%B6%E8%A1%8C%EF%BC%88SGD%EF%BC%89/"/>
+    
+      <category term="异步并行（ASGD）" scheme="https://wjykl22.github.io/tags/%E5%BC%82%E6%AD%A5%E5%B9%B6%E8%A1%8C%EF%BC%88ASGD%EF%BC%89/"/>
+    
+      <category term="加速比分析" scheme="https://wjykl22.github.io/tags/%E5%8A%A0%E9%80%9F%E6%AF%94%E5%88%86%E6%9E%90/"/>
+    
+      <category term="Ray" scheme="https://wjykl22.github.io/tags/Ray/"/>
+    
+      <category term="Encrypted" scheme="https://wjykl22.github.io/tags/Encrypted/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Konga前端修改设计调研</title>
+    <link href="https://wjykl22.github.io/archives/71d33514.html"/>
+    <id>https://wjykl22.github.io/archives/71d33514.html</id>
+    <published>2020-08-12T10:53:43.000Z</published>
+    <updated>2020-08-13T02:52:26.332Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;控制台&quot;&gt;控制台&lt;/h2&gt;
+&lt;p&gt;控制台依然沿用Konga控制台，显示主要信息，明确信息的内容，检索有关节点通用的详细信息。&lt;/p&gt;
+&lt;h2
+        
+      
+    
+    </summary>
+    
+    
+      <category term="API网关" scheme="https://wjykl22.github.io/categories/API%E7%BD%91%E5%85%B3/"/>
+    
+      <category term="Kong&amp;Konga" scheme="https://wjykl22.github.io/categories/API%E7%BD%91%E5%85%B3/Kong-Konga/"/>
+    
+      <category term="权限认证" scheme="https://wjykl22.github.io/categories/API%E7%BD%91%E5%85%B3/Kong-Konga/%E6%9D%83%E9%99%90%E8%AE%A4%E8%AF%81/"/>
+    
+    
+      <category term="Kong" scheme="https://wjykl22.github.io/tags/Kong/"/>
+    
+      <category term="keycloak" scheme="https://wjykl22.github.io/tags/keycloak/"/>
+    
+      <category term="权限认证" scheme="https://wjykl22.github.io/tags/%E6%9D%83%E9%99%90%E8%AE%A4%E8%AF%81/"/>
+    
+      <category term="docker" scheme="https://wjykl22.github.io/tags/docker/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>LAQ和LAG代码研读</title>
+    <link href="https://wjykl22.github.io/archives/d34fba27.html"/>
+    <id>https://wjykl22.github.io/archives/d34fba27.html</id>
+    <published>2020-08-06T07:53:47.000Z</published>
+    <updated>2020-08-12T11:00:12.282Z</updated>
+    
+    <summary type="html">
+    
+      此文加密，请输入密码
+    
+    </summary>
+    
+    
+      <category term="科研" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/"/>
+    
+      <category term="分布式机器学习" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="通信优化" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/"/>
+    
+      <category term="梯度压缩" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/%E6%A2%AF%E5%BA%A6%E5%8E%8B%E7%BC%A9/"/>
+    
+    
+      <category term="分布式机器学习" scheme="https://wjykl22.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="科研" scheme="https://wjykl22.github.io/tags/%E7%A7%91%E7%A0%94/"/>
+    
+      <category term="通信优化" scheme="https://wjykl22.github.io/tags/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/"/>
+    
+      <category term="梯度压缩" scheme="https://wjykl22.github.io/tags/%E6%A2%AF%E5%BA%A6%E5%8E%8B%E7%BC%A9/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>上升和下降窗口</title>
+    <link href="https://wjykl22.github.io/archives/fe577f0d.html"/>
+    <id>https://wjykl22.github.io/archives/fe577f0d.html</id>
+    <published>2020-08-02T02:16:47.000Z</published>
+    <updated>2020-08-28T11:30:10.369Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;和“跳空”指代的是同一个意思：价格运动出现了一个没有发生任何交易行为的价格区域。&lt;/p&gt;
+&lt;h2
+        
+      
+    
+    </summary>
+    
+    
+      <category term="投资" scheme="https://wjykl22.github.io/categories/%E6%8A%95%E8%B5%84/"/>
+    
+      <category term="技术面" scheme="https://wjykl22.github.io/categories/%E6%8A%95%E8%B5%84/%E6%8A%80%E6%9C%AF%E9%9D%A2/"/>
+    
+      <category term="蜡烛图" scheme="https://wjykl22.github.io/categories/%E6%8A%95%E8%B5%84/%E6%8A%80%E6%9C%AF%E9%9D%A2/%E8%9C%A1%E7%83%9B%E5%9B%BE/"/>
+    
+      <category term="组合形态" scheme="https://wjykl22.github.io/categories/%E6%8A%95%E8%B5%84/%E6%8A%80%E6%9C%AF%E9%9D%A2/%E8%9C%A1%E7%83%9B%E5%9B%BE/%E7%BB%84%E5%90%88%E5%BD%A2%E6%80%81/"/>
+    
+    
+      <category term="蜡烛图" scheme="https://wjykl22.github.io/tags/%E8%9C%A1%E7%83%9B%E5%9B%BE/"/>
+    
+      <category term="K线" scheme="https://wjykl22.github.io/tags/K%E7%BA%BF/"/>
+    
+      <category term="投资" scheme="https://wjykl22.github.io/tags/%E6%8A%95%E8%B5%84/"/>
+    
+      <category term="股票" scheme="https://wjykl22.github.io/tags/%E8%82%A1%E7%A5%A8/"/>
+    
+      <category term="期货" scheme="https://wjykl22.github.io/tags/%E6%9C%9F%E8%B4%A7/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>平头、乌鸦和士兵</title>
+    <link href="https://wjykl22.github.io/archives/11684b86.html"/>
+    <id>https://wjykl22.github.io/archives/11684b86.html</id>
+    <published>2020-08-01T12:51:41.000Z</published>
+    <updated>2020-08-28T11:30:10.390Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2
+        
+      
+    
+    </summary>
+    
+    
+      <category term="投资" scheme="https://wjykl22.github.io/categories/%E6%8A%95%E8%B5%84/"/>
+    
+      <category term="技术面" scheme="https://wjykl22.github.io/categories/%E6%8A%95%E8%B5%84/%E6%8A%80%E6%9C%AF%E9%9D%A2/"/>
+    
+      <category term="蜡烛图" scheme="https://wjykl22.github.io/categories/%E6%8A%95%E8%B5%84/%E6%8A%80%E6%9C%AF%E9%9D%A2/%E8%9C%A1%E7%83%9B%E5%9B%BE/"/>
+    
+      <category term="组合形态" scheme="https://wjykl22.github.io/categories/%E6%8A%95%E8%B5%84/%E6%8A%80%E6%9C%AF%E9%9D%A2/%E8%9C%A1%E7%83%9B%E5%9B%BE/%E7%BB%84%E5%90%88%E5%BD%A2%E6%80%81/"/>
+    
+    
+      <category term="蜡烛图" scheme="https://wjykl22.github.io/tags/%E8%9C%A1%E7%83%9B%E5%9B%BE/"/>
+    
+      <category term="K线" scheme="https://wjykl22.github.io/tags/K%E7%BA%BF/"/>
+    
+      <category term="投资" scheme="https://wjykl22.github.io/tags/%E6%8A%95%E8%B5%84/"/>
+    
+      <category term="股票" scheme="https://wjykl22.github.io/tags/%E8%82%A1%E7%A5%A8/"/>
+    
+      <category term="期货" scheme="https://wjykl22.github.io/tags/%E6%9C%9F%E8%B4%A7/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>孕线与十字孕线、启明星与黄昏线</title>
+    <link href="https://wjykl22.github.io/archives/70896bd9.html"/>
+    <id>https://wjykl22.github.io/archives/70896bd9.html</id>
+    <published>2020-08-01T09:35:42.000Z</published>
+    <updated>2020-08-28T11:30:10.386Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;孕线&quot;&gt;孕线&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;第一根蜡烛是一个远超一般长度的红色和绿色实体&lt;/li&gt;
+&lt;li&gt;第二根蜡烛实体被第一根蜡烛包裹&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img
+        
+      
+    
+    </summary>
+    
+    
+      <category term="投资" scheme="https://wjykl22.github.io/categories/%E6%8A%95%E8%B5%84/"/>
+    
+      <category term="技术面" scheme="https://wjykl22.github.io/categories/%E6%8A%95%E8%B5%84/%E6%8A%80%E6%9C%AF%E9%9D%A2/"/>
+    
+      <category term="蜡烛图" scheme="https://wjykl22.github.io/categories/%E6%8A%95%E8%B5%84/%E6%8A%80%E6%9C%AF%E9%9D%A2/%E8%9C%A1%E7%83%9B%E5%9B%BE/"/>
+    
+      <category term="组合形态" scheme="https://wjykl22.github.io/categories/%E6%8A%95%E8%B5%84/%E6%8A%80%E6%9C%AF%E9%9D%A2/%E8%9C%A1%E7%83%9B%E5%9B%BE/%E7%BB%84%E5%90%88%E5%BD%A2%E6%80%81/"/>
+    
+    
+      <category term="蜡烛图" scheme="https://wjykl22.github.io/tags/%E8%9C%A1%E7%83%9B%E5%9B%BE/"/>
+    
+      <category term="K线" scheme="https://wjykl22.github.io/tags/K%E7%BA%BF/"/>
+    
+      <category term="投资" scheme="https://wjykl22.github.io/tags/%E6%8A%95%E8%B5%84/"/>
+    
+      <category term="股票" scheme="https://wjykl22.github.io/tags/%E8%82%A1%E7%A5%A8/"/>
+    
+      <category term="期货" scheme="https://wjykl22.github.io/tags/%E6%9C%9F%E8%B4%A7/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>刺透、乌云盖顶、吞没以及反击线</title>
+    <link href="https://wjykl22.github.io/archives/b4c92d84.html"/>
+    <id>https://wjykl22.github.io/archives/b4c92d84.html</id>
+    <published>2020-08-01T01:42:39.000Z</published>
+    <updated>2020-08-03T06:05:34.465Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;两根蜡烛图会比一根蜡烛传达的信息更加准确：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;第一根蜡说明市场达到顶部或者底部&lt;/li&gt;
+&lt;li&gt;第二根蜡烛进行确认&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;三根蜡烛会更加准确&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;第一根说明之前的趋势正在继续&lt;/li&gt;
+&lt;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="投资" scheme="https://wjykl22.github.io/categories/%E6%8A%95%E8%B5%84/"/>
+    
+      <category term="技术面" scheme="https://wjykl22.github.io/categories/%E6%8A%95%E8%B5%84/%E6%8A%80%E6%9C%AF%E9%9D%A2/"/>
+    
+      <category term="蜡烛图" scheme="https://wjykl22.github.io/categories/%E6%8A%95%E8%B5%84/%E6%8A%80%E6%9C%AF%E9%9D%A2/%E8%9C%A1%E7%83%9B%E5%9B%BE/"/>
+    
+      <category term="组合形态" scheme="https://wjykl22.github.io/categories/%E6%8A%95%E8%B5%84/%E6%8A%80%E6%9C%AF%E9%9D%A2/%E8%9C%A1%E7%83%9B%E5%9B%BE/%E7%BB%84%E5%90%88%E5%BD%A2%E6%80%81/"/>
+    
+    
+      <category term="蜡烛图" scheme="https://wjykl22.github.io/tags/%E8%9C%A1%E7%83%9B%E5%9B%BE/"/>
+    
+      <category term="K线" scheme="https://wjykl22.github.io/tags/K%E7%BA%BF/"/>
+    
+      <category term="投资" scheme="https://wjykl22.github.io/tags/%E6%8A%95%E8%B5%84/"/>
+    
+      <category term="股票" scheme="https://wjykl22.github.io/tags/%E8%82%A1%E7%A5%A8/"/>
+    
+      <category term="期货" scheme="https://wjykl22.github.io/tags/%E6%9C%9F%E8%B4%A7/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>分布式机器学习量化通信综述</title>
+    <link href="https://wjykl22.github.io/archives/88211b35.html"/>
+    <id>https://wjykl22.github.io/archives/88211b35.html</id>
+    <published>2020-07-31T08:03:49.000Z</published>
+    <updated>2020-08-04T09:10:21.154Z</updated>
+    
+    <summary type="html">
+    
+      此文加密，请输入密码
+    
+    </summary>
+    
+    
+      <category term="科研" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/"/>
+    
+      <category term="分布式机器学习" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="通信优化" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/"/>
+    
+      <category term="梯度压缩" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/%E6%A2%AF%E5%BA%A6%E5%8E%8B%E7%BC%A9/"/>
+    
+    
+      <category term="分布式机器学习" scheme="https://wjykl22.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="通信优化" scheme="https://wjykl22.github.io/tags/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/"/>
+    
+      <category term="梯度压缩" scheme="https://wjykl22.github.io/tags/%E6%A2%AF%E5%BA%A6%E5%8E%8B%E7%BC%A9/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>1 Bits SGD and its Application to Data Parallel Distributed Training of Speach DNNs</title>
+    <link href="https://wjykl22.github.io/archives/1b1e994e.html"/>
+    <id>https://wjykl22.github.io/archives/1b1e994e.html</id>
+    <published>2020-07-31T06:45:54.000Z</published>
+    <updated>2020-07-31T08:02:49.849Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2
+        
+      
+    
+    </summary>
+    
+    
+      <category term="科研" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/"/>
+    
+      <category term="分布式机器学习" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="通信优化" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/"/>
+    
+      <category term="梯度压缩" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/%E6%A2%AF%E5%BA%A6%E5%8E%8B%E7%BC%A9/"/>
+    
+    
+      <category term="分布式机器学习" scheme="https://wjykl22.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="通信优化" scheme="https://wjykl22.github.io/tags/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/"/>
+    
+      <category term="梯度压缩" scheme="https://wjykl22.github.io/tags/%E6%A2%AF%E5%BA%A6%E5%8E%8B%E7%BC%A9/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>A Survey on Methods and Theories of Quantized Neural Networks</title>
+    <link href="https://wjykl22.github.io/archives/2932556.html"/>
+    <id>https://wjykl22.github.io/archives/2932556.html</id>
+    <published>2020-07-29T06:30:28.000Z</published>
+    <updated>2020-07-31T13:08:17.954Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;摘要&quot;&gt;摘要&lt;/h2&gt;
+&lt;p&gt;当下流行的深度神经网络具有非常复杂的结构，训练时需要消耗大量的内存和电源；在移动端和边缘设备等资源限制的情况下难以发挥作用，而量化则是解决上述问题的办法之一。原来的神经网络权重、激活和梯度都需要采用&lt;span
+        
+      
+    
+    </summary>
+    
+    
+      <category term="科研" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/"/>
+    
+      <category term="分布式机器学习" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="通信优化" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/"/>
+    
+      <category term="梯度压缩" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/%E6%A2%AF%E5%BA%A6%E5%8E%8B%E7%BC%A9/"/>
+    
+    
+      <category term="分布式机器学习" scheme="https://wjykl22.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="通信优化" scheme="https://wjykl22.github.io/tags/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/"/>
+    
+      <category term="梯度压缩" scheme="https://wjykl22.github.io/tags/%E6%A2%AF%E5%BA%A6%E5%8E%8B%E7%BC%A9/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Error Compensated Quantized SGD and its Applications to Large-scale</title>
+    <link href="https://wjykl22.github.io/archives/fcc7e450.html"/>
+    <id>https://wjykl22.github.io/archives/fcc7e450.html</id>
+    <published>2020-07-28T06:55:28.000Z</published>
+    <updated>2020-07-28T11:37:43.444Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2
+        
+      
+    
+    </summary>
+    
+    
+      <category term="科研" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/"/>
+    
+      <category term="分布式机器学习" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="通信优化" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/"/>
+    
+      <category term="梯度压缩" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/%E6%A2%AF%E5%BA%A6%E5%8E%8B%E7%BC%A9/"/>
+    
+    
+      <category term="分布式机器学习" scheme="https://wjykl22.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="通信优化" scheme="https://wjykl22.github.io/tags/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/"/>
+    
+      <category term="梯度压缩" scheme="https://wjykl22.github.io/tags/%E6%A2%AF%E5%BA%A6%E5%8E%8B%E7%BC%A9/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>QSGD Communication-Efficient SGD via Gradient Quantization and Encoding</title>
+    <link href="https://wjykl22.github.io/archives/d06ef2e3.html"/>
+    <id>https://wjykl22.github.io/archives/d06ef2e3.html</id>
+    <published>2020-07-28T01:06:20.000Z</published>
+    <updated>2020-07-29T12:47:10.033Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2
+        
+      
+    
+    </summary>
+    
+    
+      <category term="科研" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/"/>
+    
+      <category term="分布式机器学习" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="通信优化" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/"/>
+    
+      <category term="梯度压缩" scheme="https://wjykl22.github.io/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/%E6%A2%AF%E5%BA%A6%E5%8E%8B%E7%BC%A9/"/>
+    
+    
+      <category term="分布式机器学习" scheme="https://wjykl22.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="通信优化" scheme="https://wjykl22.github.io/tags/%E9%80%9A%E4%BF%A1%E4%BC%98%E5%8C%96/"/>
+    
+      <category term="梯度压缩" scheme="https://wjykl22.github.io/tags/%E6%A2%AF%E5%BA%A6%E5%8E%8B%E7%BC%A9/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>粉笔公考-判断推理-图形推理</title>
+    <link href="https://wjykl22.github.io/archives/487a2936.html"/>
+    <id>https://wjykl22.github.io/archives/487a2936.html</id>
+    <published>2020-07-27T12:39:49.000Z</published>
+    <updated>2020-07-28T13:11:16.435Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;判断推理题型&quot;&gt;判断推理题型&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;图形推理&lt;/li&gt;
+&lt;li&gt;类比推理&lt;/li&gt;
+&lt;li&gt;定义判断&lt;/li&gt;
+&lt;li&gt;逻辑判断&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;图形推理&quot;&gt;图形推理&lt;/h2&gt;
+&lt;h3
+        
+      
+    
+    </summary>
+    
+    
+      <category term="公务员考试" scheme="https://wjykl22.github.io/categories/%E5%85%AC%E5%8A%A1%E5%91%98%E8%80%83%E8%AF%95/"/>
+    
+      <category term="判断推理" scheme="https://wjykl22.github.io/categories/%E5%85%AC%E5%8A%A1%E5%91%98%E8%80%83%E8%AF%95/%E5%88%A4%E6%96%AD%E6%8E%A8%E7%90%86/"/>
+    
+    
+      <category term="国考" scheme="https://wjykl22.github.io/tags/%E5%9B%BD%E8%80%83/"/>
+    
+      <category term="行测" scheme="https://wjykl22.github.io/tags/%E8%A1%8C%E6%B5%8B/"/>
+    
+      <category term="判断推理" scheme="https://wjykl22.github.io/tags/%E5%88%A4%E6%96%AD%E6%8E%A8%E7%90%86/"/>
+    
+      <category term="图形推理" scheme="https://wjykl22.github.io/tags/%E5%9B%BE%E5%BD%A2%E6%8E%A8%E7%90%86/"/>
+    
+      <category term="类比推理" scheme="https://wjykl22.github.io/tags/%E7%B1%BB%E6%AF%94%E6%8E%A8%E7%90%86/"/>
+    
+      <category term="定义判断" scheme="https://wjykl22.github.io/tags/%E5%AE%9A%E4%B9%89%E5%88%A4%E6%96%AD/"/>
+    
+      <category term="逻辑判断" scheme="https://wjykl22.github.io/tags/%E9%80%BB%E8%BE%91%E5%88%A4%E6%96%AD/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Kong和Keycloak第三方认证和权限管理</title>
+    <link href="https://wjykl22.github.io/archives/fbb6b1b9.html"/>
+    <id>https://wjykl22.github.io/archives/fbb6b1b9.html</id>
+    <published>2020-07-27T02:48:15.000Z</published>
+    <updated>2020-07-27T07:35:27.255Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2
+        
+      
+    
+    </summary>
+    
+    
+      <category term="API网关" scheme="https://wjykl22.github.io/categories/API%E7%BD%91%E5%85%B3/"/>
+    
+      <category term="Kong&amp;Konga" scheme="https://wjykl22.github.io/categories/API%E7%BD%91%E5%85%B3/Kong-Konga/"/>
+    
+      <category term="权限认证" scheme="https://wjykl22.github.io/categories/API%E7%BD%91%E5%85%B3/Kong-Konga/%E6%9D%83%E9%99%90%E8%AE%A4%E8%AF%81/"/>
+    
+    
+      <category term="Kong" scheme="https://wjykl22.github.io/tags/Kong/"/>
+    
+      <category term="keycloak" scheme="https://wjykl22.github.io/tags/keycloak/"/>
+    
+      <category term="权限认证" scheme="https://wjykl22.github.io/tags/%E6%9D%83%E9%99%90%E8%AE%A4%E8%AF%81/"/>
+    
+      <category term="docker" scheme="https://wjykl22.github.io/tags/docker/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Hello World</title>
+    <link href="https://wjykl22.github.io/archives/4a17b156.html"/>
+    <id>https://wjykl22.github.io/archives/4a17b156.html</id>
+    <published>2020-07-27T02:12:10.065Z</published>
+    <updated>2020-07-27T02:19:33.297Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot; target=&quot;_blank&quot; rel=&quot;noopener external nofollow noreferrer&quot;&gt;Hexo&lt;/a&gt;! This is your very first
+        
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
+  
+</feed>

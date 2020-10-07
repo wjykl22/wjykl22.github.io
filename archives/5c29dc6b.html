@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=EB Garamond:300,300italic,400,400italic,700,700italic|Cinzel Decorative:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"wjykl22.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="AccPar：针对异构深度学习加速器的张量划分方法  作者：Linghao Song 南加利福尼亚大学 杜克大学 IEEE HPCA（High Performance Computer Architecture）  概括 提出了AccPar，在异构加速阵列上划分张量的方法，和其他方法相比，AccPar有着更加完备的张量划分空间（tensor partition space）同时能够产生">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AccPar: Tensor Partitioning for Heterogeneous Deep Learning Accelerators">
+<meta property="og:url" content="https://wjykl22.github.io/archives/5c29dc6b.html">
+<meta property="og:site_name" content="韭零后">
+<meta property="og:description" content="AccPar：针对异构深度学习加速器的张量划分方法  作者：Linghao Song 南加利福尼亚大学 杜克大学 IEEE HPCA（High Performance Computer Architecture）  概括 提出了AccPar，在异构加速阵列上划分张量的方法，和其他方法相比，AccPar有着更加完备的张量划分空间（tensor partition space）同时能够产生">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wjykl22.github.io/archives/5c29dc6b/image-20201007185047869.png">
+<meta property="og:image" content="https://wjykl22.github.io/archives/5c29dc6b/image-20201007191707379.png">
+<meta property="og:image" content="https://wjykl22.github.io/archives/5c29dc6b/image-20201007191855397.png">
+<meta property="og:image" content="https://wjykl22.github.io/archives/5c29dc6b/image-20201007192005535.png">
+<meta property="og:image" content="https://wjykl22.github.io/archives/5c29dc6b/image-20201007193609409.png">
+<meta property="og:image" content="https://wjykl22.github.io/archives/5c29dc6b/image-20201007195435976.png">
+<meta property="og:image" content="https://wjykl22.github.io/archives/5c29dc6b/image-20201007195855700.png">
+<meta property="og:image" content="https://wjykl22.github.io/archives/5c29dc6b/image-20201007195910275.png">
+<meta property="article:published_time" content="2020-10-07T02:33:24.000Z">
+<meta property="article:modified_time" content="2020-10-07T11:59:42.940Z">
+<meta property="article:author" content="Jiyang">
+<meta property="article:tag" content="分布式机器学习">
+<meta property="article:tag" content="数据并行">
+<meta property="article:tag" content="模型并行">
+<meta property="article:tag" content="科研">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wjykl22.github.io/archives/5c29dc6b/image-20201007185047869.png">
+
+<link rel="canonical" href="https://wjykl22.github.io/archives/5c29dc6b.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<link rel="stylesheet" type="text/css" href="/css/injector.css" />
+  <title>AccPar: Tensor Partitioning for Heterogeneous Deep Learning Accelerators | 韭零后</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="韭零后" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">韭零后</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">公元1996 - ?</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-主页">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>主页</a>
+
+  </li>
+        <li class="menu-item menu-item-关于">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-标签">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-目录">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>目录</a>
+
+  </li>
+        <li class="menu-item menu-item-结构">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>结构</a>
+
+  </li>
+        <li class="menu-item menu-item-站点地图">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+        <li class="menu-item menu-item-公益">
+
+    <a href="/404.html" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wjykl22.github.io/archives/5c29dc6b.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/avatar.jpg">
+      <meta itemprop="name" content="Jiyang">
+      <meta itemprop="description" content="世界上有两样东西不可直视，一是太阳，二是人心">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="韭零后">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          AccPar: Tensor Partitioning for Heterogeneous Deep Learning Accelerators
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-10-07 10:33:24 / 修改时间：19:59:42" itemprop="dateCreated datePublished" datetime="2020-10-07T10:33:24+08:00">2020-10-07</time>
+            </span>
+            
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%A7%91%E7%A0%94/" itemprop="url" rel="index"><span itemprop="name">科研</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">分布式机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%A7%91%E7%A0%94/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">论文阅读笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/archives/5c29dc6b.html" class="post-meta-item leancloud_visitors" data-flag-title="AccPar: Tensor Partitioning for Heterogeneous Deep Learning Accelerators" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/archives/5c29dc6b.html#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/archives/5c29dc6b.html" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="accpar针对异构深度学习加速器的张量划分方法">AccPar：针对异构深度学习加速器的张量划分方法</h2>
+<ul>
+<li>作者：Linghao Song 南加利福尼亚大学 杜克大学</li>
+<li>IEEE HPCA（High Performance Computer Architecture）</li>
+</ul>
+<h3 id="概括">概括</h3>
+<p>提出了AccPar，在异构加速阵列上划分张量的方法，和其他方法相比，AccPar有着更加完备的张量划分空间（tensor partition space）同时能够产生其他方法未知的并行策略。</p>
+<p>AccPar依赖于异构环境下，计算和通信消耗（computation and communication costs）。而且AccPar可以根据加速器的异构情况，使用灵活的划分比率来适应异构环境。</p>
+<p>相比于OWT（one weird trick）方法、HYPAR方法以及传统的数据并行方法，分别提升了2.98倍、3.78倍和6.30倍。</p>
+<h3 id="背景介绍">背景介绍</h3>
+<h5 id="现有方法">现有方法</h5>
+<h6 id="one-weird-trickowt">One Weird Trick（OWT）</h6>
+<p>对于卷积层采用数据并行，对于全连接层采用模型并行</p>
+<h6 id="hypar">HYPAR</h6>
+<p>提出了一种最小化数据通信的并行方法，能够比OWT拥有更好的效果。</p>
+<p>这些方法存在如下问题：</p>
+<ol type="1">
+<li>并行方法的搜索基于不完备的设计空间</li>
+<li>只能处理线性结构的DNN体系结构</li>
+<li>它们只考虑了通信而没有考虑计算</li>
+<li>假设是在设备同构的环境下</li>
+</ol>
+<h5 id="accpar方法">AccPar方法</h5>
+<ol type="1">
+<li>提出了完备的张量划分空间
+<ul>
+<li>批量（batch size）</li>
+<li>数据数据尺寸（imput data size）</li>
+<li>输出数据尺寸（output data size）</li>
+</ul></li>
+<li>提出了异构环境下communication cost和computation cost</li>
+<li>灵活变化划分比率</li>
+</ol>
+<blockquote>
+<p>总的来说，该方法能够感知计算资源的异构性和网络带宽能力，从而实现张量的划分。</p>
+</blockquote>
+<p>作者先对现有DNN加速器和加速框架和它们不同的细分领域做了梳理：</p>
+<figure>
+<img src="/archives/5c29dc6b/image-20201007185047869.png" alt="image-20201007185047869"><figcaption aria-hidden="true">image-20201007185047869</figcaption>
+</figure>
+<blockquote>
+<p>包括FPGA加速、数据流处理（Dataflow）、PIM（Processing-in-memory）以及其他新型的并行框架</p>
+</blockquote>
+<h3 id="张量划分空间">张量划分空间</h3>
+<ul>
+<li>批量（batch size）</li>
+<li>数据数据尺寸（imput data size）</li>
+<li>输出数据尺寸（output data size）</li>
+</ul>
+<p>符号简要介绍：</p>
+<table>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\mathbf{F}_{l}\)</span></td>
+<td>输入到第<span class="math inline">\(l\)</span>层的特征矩阵（第<span class="math inline">\(l-1\)</span>层输出的特征向量）</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\mathbf{E}_{l-1}\)</span></td>
+<td>输入到第<span class="math inline">\(l\)</span>层的误差矩阵（第<span class="math inline">\(l+1\)</span>层输出的误差矩阵）</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\mathbf{W}_{l}\)</span></td>
+<td>第<span class="math inline">\(l\)</span>层的参数</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\triangle \mathbf{W}_{l}\)</span></td>
+<td>第<span class="math inline">\(l\)</span>层的梯度</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(B\)</span></td>
+<td>Mini-batch size</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\mathbf{D}_{i,l}\)</span></td>
+<td>第<span class="math inline">\(l\)</span>层输入数据尺寸</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\mathbf{D}_{0,l}\)</span></td>
+<td>第<span class="math inline">\(l\)</span>层输出数据尺寸</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\alpha, \beta\)</span></td>
+<td>划分比率</td>
+</tr>
+</tbody>
+</table>
+<h4 id="问题阐述">问题阐述</h4>
+<p>一个DNN网络涉及下列三个重要环节：</p>
+<ol type="1">
+<li>前传：Forward <span class="math inline">\(\mathbf{F}_{l+1}=f\left(\mathbf{F}_{l} \times \mathbf{W}_{l}\right)\)</span></li>
+<li>后传：Backward <span class="math inline">\(\mathbf{E}_{l}=\left(\mathbf{E}_{l+1} \times \mathbf{W}_{l}^{\top}\right) \odot f^{\prime}\left(\mathbf{F}_{l}\right)\)</span></li>
+<li>求梯度：Gradient <span class="math inline">\(\Delta \mathbf{W}_{l}=\mathbf{F}_{l}^{\top} \times \mathbf{E}_{l+1}\)</span></li>
+</ol>
+<p>用数据尺寸可表示为：</p>
+<ol type="1">
+<li>前传：Forward <span class="math inline">\(\left(B, D_{o, l}\right) \leftarrow\left(B, D_{i, l}\right) \times\left(D_{i, l}, D_{o, l}\right)\)</span></li>
+<li>后传：Backward <span class="math inline">\(\left(B, D_{i, l}\right) \leftarrow\left(B, D_{o, l}\right) \times\left(D_{o, l}, D_{i, l}\right)\)</span></li>
+<li>求梯度：Gradient <span class="math inline">\(\left(D_{i, l}, D_{o, l}\right) \leftarrow\left(D_{i, l}, B\right) \times\left(B, D_{o, l}\right)\)</span></li>
+</ol>
+<h4 id="划分维度">划分维度</h4>
+<p>假设1：<span class="math inline">\(\mathbf{F}_{l}\)</span>和<span class="math inline">\(\mathbf{E}_{l}\)</span>采用相同的划分方式</p>
+<blockquote>
+<p>原因：如果采用不相同的划分方式，会导致引入额外的通信，这和最小化communication costs相悖。</p>
+</blockquote>
+<p>假设2：这几个维度并不是独立的，所以每次只有一个维度能够划分</p>
+<blockquote>
+<p>举例：以前传：Forward为例<span class="math inline">\(\left(B, D_{o, l}\right) \leftarrow\left(B, D_{i, l}\right) \times\left(D_{i, l}, D_{o, l}\right)\)</span>，如果我们选定要划分<span class="math inline">\(B\)</span>这个维度</p>
+<ol type="1">
+<li>其中<span class="math inline">\(\mathbf{D}_{i,l}\)</span>不能划分，如果划分了矩阵乘法就无法进行了。</li>
+<li><span class="math inline">\(D_{o, l}\)</span>也不能划分，如果划分，最后得到的矩阵只有左上右下或者右上左下的部分矩阵计算</li>
+</ol>
+</blockquote>
+<p>以下内容只以Type-1作为例子进行详细阐述，其余的划分方法原理相同。（假设两块加速卡）</p>
+<h5 id="type-1划分b维度">Type-1：划分B维度</h5>
+<h6 id="前传forward">前传：Forward</h6>
+<p><span class="math display">\[
+\mathbf{F}_{l+1}[b, q o]=\sum_{q i \in\left\{1, \cdots, D_{i, l}\right\}} \mathbf{F}_{l}[b, q i] \times \mathbf{W}_{l}[q i, q o]
+\]</span></p>
+<p>其中一块数据划分<span class="math inline">\(\mathbf{F}_{l}[1: \alpha B,:]\)</span>，另一块<span class="math inline">\(\mathbf{F}_{l}[\alpha B+1: B,:]\)</span></p>
+<figure>
+<img src="/archives/5c29dc6b/image-20201007191707379.png" alt="image-20201007191707379"><figcaption aria-hidden="true">image-20201007191707379</figcaption>
+</figure>
+<h6 id="后传backward">后传：Backward</h6>
+<p><span class="math display">\[
+\mathbf{E}_{l}[b, q i]=\sum_{q o \in\left\{1, \cdots, D_{o, l}\right\}} \mathbf{E}_{l+1}[b, q o] \times \mathbf{W}_{l}^{\top}[q o, q i]
+\]</span></p>
+<p>其中一块误差划分<span class="math inline">\(\mathbf{E}_{l+1}[1: \alpha B,:]\)</span>，另一块：<span class="math inline">\(\mathbf{E}_{l}[\alpha B+1: B,:]\)</span></p>
+<figure>
+<img src="/archives/5c29dc6b/image-20201007191855397.png" alt="image-20201007191855397"><figcaption aria-hidden="true">image-20201007191855397</figcaption>
+</figure>
+<h6 id="梯度计算">梯度计算</h6>
+<p><span class="math display">\[
+\Delta \mathbf{W}_{l}[q i, q o]=\sum_{b \in\{1, \cdots, B\}} \mathbf{F}_{l}^{\top}[q i, b] \times \mathbf{E}_{l+1}[b, q o]
+\]</span></p>
+<p><span class="math display">\[
+\begin{aligned}
+\Delta \mathbf{W}_{l}[q i, q o]=&amp; \sum_{b \in\{1, \cdots, \alpha B\}} \mathbf{F}_{l}^{\top}[q i, b] \times \mathbf{E}_{l+1}[b, q o] \\
+&amp;+\sum_{b \in\{\alpha B+1, \cdots, B\}} \mathbf{F}_{l}^{\top}[q i, b] \times \mathbf{E}_{l+1}[b, q o]
+\end{aligned}
+\]</span></p>
+<figure>
+<img src="/archives/5c29dc6b/image-20201007192005535.png" alt="image-20201007192005535"><figcaption aria-hidden="true">image-20201007192005535</figcaption>
+</figure>
+<blockquote>
+<p>这里将产生层内通信（intra-layer），因为最后的结果必须将两块加速卡上计算出的部分梯度相加得到梯度结果。</p>
+</blockquote>
+<h5 id="type-2划分mathbfd_il维度">Type-2：划分<span class="math inline">\(\mathbf{D}_{i,l}\)</span>维度</h5>
+<p>同样的分析方式，只不过划分<span class="math inline">\(\mathbf{D}_{i,l}\)</span>维度的层内（intra-layer）通信是在前传：Forward过程中产生，因为： <span class="math display">\[
+\begin{aligned}
+\mathbf{F}_{l+1}[b, q o]=&amp; \sum_{q i \in\left\{1, \cdots, \alpha D_{i, l}\right\}} \mathbf{F}_{l}[b, q i] \times \mathbf{W}_{l}[q i, q o] \\
+&amp;+\sum_{q i \in\left\{\alpha D_{i, l}+1, \cdots, D_{i, l}\right\}} \mathbf{F}_{l}[b, q i] \times \mathbf{W}_{l}[q i, q o]
+\end{aligned}
+\]</span></p>
+<h5 id="type-3划分mathbfd_ol维度">Type-3：划分<span class="math inline">\(\mathbf{D}_{o,l}\)</span>维度</h5>
+<p>在后传：Backward的过程中产生层内（intra-layer）通信 <span class="math display">\[
+\begin{aligned}
+\mathbf{E}_{l}[b, q i] &amp;=\sum_{q o \in\left\{1, \cdots, \alpha D_{o, l}\right\}} \mathbf{E}_{l+1}[b, q o] \times \mathbf{W}_{l}^{\top}[q o, q i] \\
+&amp;+\sum_{q o \in\left\{\alpha D_{o, l}+1, \cdots, D_{o, l}\right\}} \mathbf{E}_{l+1}[b, q o] \times \mathbf{W}_{l}^{\top}[q o, q i]
+\end{aligned}
+\]</span></p>
+<h4 id="和hypar以及owt对比">和Hypar以及OWT对比</h4>
+<p>OWT是特殊的数据和模型并行</p>
+<p>HyPar是不完备的搜索空间，只考虑了Type-1和Type-2</p>
+<h3 id="accpar的cost-model">AccPar的COST MODEL</h3>
+<h5 id="communication-cost-model">Communication Cost Model</h5>
+<p><span class="math display">\[
+E_{\mathrm{cm}}=\frac{\mathbb{A}(\mathbf{T})}{b_{i}}
+\]</span></p>
+<p><span class="math inline">\(\mathbb{A}(\mathbf{T})\)</span>是虽有维度的长度，例如：shape是（2,2,4,4）的张量，其<span class="math inline">\(\mathbb{A}(\mathbf{T})\)</span>就是为<span class="math inline">\(2*2*4*4\)</span>，<span class="math inline">\(b_i\)</span>代表加速器<span class="math inline">\(i\)</span>的带宽。</p>
+<h6 id="层内通信intra-layer">层内通信（Intra-layer）</h6>
+<p>以Type-1中的梯度计算为例：如果划分比例是<span class="math inline">\(\alpha\)</span>；</p>
+<p>对于每个<span class="math inline">\(b \in\{1, \cdots, \alpha B\}\)</span>，都有<span class="math inline">\(\mathbb{A}\left(\mathbf{F}_{l}^{\top}[:, b] \times \mathbf{E}_{l+1}[b,:]\right)=D_{i, l} \cdot D_{o, l}=\mathbb{A}\left(\triangle \mathbf{W}_{l}\right)=\mathbb{A}\left(\mathbf{W}_{l}\right)\)</span></p>
+<h6 id="层间通信inter-layer">层间通信（Inter-layer）</h6>
+<p>总共有Type1-3种划分方式，这一层到下一层排列组合就有9种层间通信的方式，举例来说：</p>
+<figure>
+<img src="/archives/5c29dc6b/image-20201007193609409.png" alt="image-20201007193609409"><figcaption aria-hidden="true">image-20201007193609409</figcaption>
+</figure>
+<ol type="1">
+<li><p>（a）Type1 到 2；（f）Type2 到 3 以及 （h）Type 3 到 2</p>
+<p>层间的通信为0，由于从<span class="math inline">\(l\)</span>（绿）到<span class="math inline">\(l+1\)</span>层（蓝）的划分是完全相同的，所以不需要额外的通信。</p></li>
+<li><p>（c）Type1 到 3；（d）Type2 到 1；（e）Type 2 到 2 以及（i）Type 3 到 3</p>
+<p>以（c）图为例，在前传的过程中，加速器<span class="math inline">\(i\)</span>的划分比率是<span class="math inline">\(\alpha\)</span>，它具有绿色阴影部分的张量，但是下一层这个加速器采用Type4的划分方式，需要完整的蓝色的张量，他们之间相差了黑色部分，需要进行通信，该通信称为层间通信，<span class="math inline">\((\beta B) \times D_{o, l}=\beta \mathbb{A}\left(\mathbf{F}_{l+1}\right)\)</span>。</p></li>
+<li><p>（b）Type1 到 2；（g）Type3 到 1</p>
+<p>同理，此处不再赘述。</p></li>
+</ol>
+<h5 id="computation-cost-model">Computation Cost Model</h5>
+<p><span class="math display">\[
+E_{\mathrm{cp}}=\frac{\alpha \cdot \mathbb{C}\left(\mathbf{T}_{1} \times \mathbf{T}_{2}\right)}{c_{i}}
+\]</span></p>
+<p>分子是划分后张量所需的精度位数（bits），分母是加速器计算密度（tensor computation density）</p>
+<p>并不难理解</p>
+<blockquote>
+<p>以上都是以全连接层举例的，同样的可以扩展到卷积层，只不过卷积层采用4维的张量进行表示，分析方法相同，此处不再赘述。</p>
+</blockquote>
+<h3 id="accpar的划分算法">AccPar的划分算法</h3>
+<p>采用动态规划的方法，采用递归定义的方式，定义第<span class="math inline">\(L_i\)</span>层的累计cost，公式如下： <span class="math display">\[
+c\left(L_{i+1}, t\right)=\min _{t t \in \mathscr{T}}\left\{c\left(L_{i}, t t\right)+E_{\mathrm{cp}}(t)+E_{\mathrm{cm}}(t t, t)\right\}
+\]</span> 其中<span class="math inline">\(t \in \mathscr{T}=\{\text { Type-I, Type-II, Type-III }\}\)</span>，<span class="math inline">\(E_{\mathrm{cp}}(t)\)</span>表示当前层<span class="math inline">\(L_{i+1}\)</span>采用<span class="math inline">\(t\)</span>这种划分方式产生的computation cost，<span class="math inline">\(E_{\mathrm{cm}}(t t, t)\)</span>表示层间和层内的cost和。</p>
+<p>最小化通信代价和计算代价即可</p>
+<figure>
+<img src="/archives/5c29dc6b/image-20201007195435976.png" alt="image-20201007195435976"><figcaption aria-hidden="true">image-20201007195435976</figcaption>
+</figure>
+<p>对于每个基本的分区类型，在算法执行期间，我们需要记录到前一层的路径，以便在遍历所有层之后回溯，如图中的黑色箭头所示。</p>
+<h4 id="划分比率">划分比率</h4>
+<p>划分比率是为了适用异构环境下的加速阵列，基本思路是使得两个加速器通信和计算时间尽量接近，以缩短同步等待时间，因此可以采用如下方法： <span class="math display">\[
+\begin{array}{r}
+\alpha \cdot E_{\mathrm{cp}}\left(p_{i, l}\right)+\alpha \cdot E_{\mathrm{cm}}\left(p_{i, l}\right) \\
+=\beta \cdot E_{\mathrm{cp}}\left(p_{j, l}\right)+\beta \cdot E_{\mathrm{cm}}\left(p_{j, l}\right)
+\end{array}
+\]</span></p>
+<h3 id="实验">实验</h3>
+<p>主要和数据并行、OWT以及HyPar进行加速比的对比实验，如下图所示：</p>
+<ul>
+<li><p>同构</p>
+<figure>
+<img src="/archives/5c29dc6b/image-20201007195855700.png" alt="image-20201007195855700"><figcaption aria-hidden="true">image-20201007195855700</figcaption>
+</figure></li>
+<li><p>异构</p>
+<figure>
+<img src="/archives/5c29dc6b/image-20201007195910275.png" alt="image-20201007195910275"><figcaption aria-hidden="true">image-20201007195910275</figcaption>
+</figure></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章推荐</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\archives\40cbe9ff.html" rel="bookmark">Device Placement Optimization with Reinforcement Learning</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\archives\62b3642.html" rel="bookmark">Beyond Data and Model Parallelism for Deep Neural Networks</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\archives\6fa57430.html" rel="bookmark">2020.08.26小组汇报</a></div>
+        <div class="popular-posts-excerpt"><p>此文加密，请输入密码</p></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\archives\d05bdbcf.html" rel="bookmark">Ray参数服务器性能测评实验</a></div>
+        <div class="popular-posts-excerpt"><p>有东西被加密了, 请输入密码查看.</p></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\archives\d34fba27.html" rel="bookmark">LAQ和LAG代码研读</a></div>
+        <div class="popular-posts-excerpt"><p>此文加密，请输入密码</p></div>
+    </li>
+  </ul>
+
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/img/wechatpay.jpg" alt="Jiyang 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/img/alipay.jpg" alt="Jiyang 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Jiyang
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://wjykl22.github.io/archives/5c29dc6b.html" title="AccPar: Tensor Partitioning for Heterogeneous Deep Learning Accelerators">https://wjykl22.github.io/archives/5c29dc6b.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener external nofollow noreferrer" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"># 分布式机器学习</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%B9%B6%E8%A1%8C/" rel="tag"># 数据并行</a>
+              <a href="/tags/%E6%A8%A1%E5%9E%8B%E5%B9%B6%E8%A1%8C/" rel="tag"># 模型并行</a>
+              <a href="/tags/%E7%A7%91%E7%A0%94/" rel="tag"># 科研</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/archives/740c8dcf.html" rel="prev" title="Alpha策略">
+      <i class="fa fa-chevron-left"></i> Alpha策略
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+    
+
+            <ul class="sidebar-nav motion-element">
+              <li class="sidebar-nav-toc">
+                文章目录
+              </li>
+              <li class="sidebar-nav-overview">
+                站点概览
+              </li>
+            </ul>
+    
+
+
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#accpar针对异构深度学习加速器的张量划分方法"><span class="nav-text">AccPar：针对异构深度学习加速器的张量划分方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#概括"><span class="nav-text">概括</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#背景介绍"><span class="nav-text">背景介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#现有方法"><span class="nav-text">现有方法</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#one-weird-trickowt"><span class="nav-text">One Weird Trick（OWT）</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#hypar"><span class="nav-text">HYPAR</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#accpar方法"><span class="nav-text">AccPar方法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#张量划分空间"><span class="nav-text">张量划分空间</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#问题阐述"><span class="nav-text">问题阐述</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#划分维度"><span class="nav-text">划分维度</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#type-1划分b维度"><span class="nav-text">Type-1：划分B维度</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#前传forward"><span class="nav-text">前传：Forward</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#后传backward"><span class="nav-text">后传：Backward</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#梯度计算"><span class="nav-text">梯度计算</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#type-2划分mathbfd_il维度"><span class="nav-text">Type-2：划分\(\mathbf{D}_{i,l}\)维度</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#type-3划分mathbfd_ol维度"><span class="nav-text">Type-3：划分\(\mathbf{D}_{o,l}\)维度</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#和hypar以及owt对比"><span class="nav-text">和Hypar以及OWT对比</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#accpar的cost-model"><span class="nav-text">AccPar的COST MODEL</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#communication-cost-model"><span class="nav-text">Communication Cost Model</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#层内通信intra-layer"><span class="nav-text">层内通信（Intra-layer）</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#层间通信inter-layer"><span class="nav-text">层间通信（Inter-layer）</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#computation-cost-model"><span class="nav-text">Computation Cost Model</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#accpar的划分算法"><span class="nav-text">AccPar的划分算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#划分比率"><span class="nav-text">划分比率</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实验"><span class="nav-text">实验</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jiyang"
+      src="/img/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Jiyang</p>
+  <div class="site-description" itemprop="description">世界上有两样东西不可直视，一是太阳，二是人心</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/wjykl22" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;wjykl22" rel="noopener external nofollow noreferrer" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:wjykl22@gmail.com" title="E-Mail → mailto:wjykl22@gmail.com" rel="noopener external nofollow noreferrer" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+    <div class="links-of-blogroll motion-element links-of-blogroll-block">
+      <div class="links-of-blogroll-title">
+        <!-- modify icon to fire by szw -->
+        <i class="fa fa-history fa-" aria-hidden="true"></i>
+        近期文章
+      </div>
+      <ul class="links-of-blogroll-list">
+        
+        
+          <li>
+            <a href="/archives/5c29dc6b.html" title="AccPar: Tensor Partitioning for Heterogeneous Deep Learning Accelerators" target="_blank">AccPar: Tensor Partitioning for Heterogeneous Deep Learning Accelerators</a>
+          </li>
+        
+          <li>
+            <a href="/archives/740c8dcf.html" title="Alpha策略" target="_blank">Alpha策略</a>
+          </li>
+        
+          <li>
+            <a href="/archives/40cbe9ff.html" title="Device Placement Optimization with Reinforcement Learning" target="_blank">Device Placement Optimization with Reinforcement Learning</a>
+          </li>
+        
+          <li>
+            <a href="/archives/60fdd68b.html" title="Communication Optimal Parallel Multiplication of Sparse Random Matrices" target="_blank">Communication Optimal Parallel Multiplication of Sparse Random Matrices</a>
+          </li>
+        
+          <li>
+            <a href="/archives/62b3642.html" title="Beyond Data and Model Parallelism for Deep Neural Networks" target="_blank">Beyond Data and Model Parallelism for Deep Neural Networks</a>
+          </li>
+        
+      </ul>
+    </div>
+
+
+      </div>
+      <div style="">
+  <canvas id="canvas" style="width:60%;">当前浏览器不支持canvas，请更换浏览器后再试</canvas>
+</div>
+<script>
+(function(){
+
+   var digit=
+    [
+        [
+            [0,0,1,1,1,0,0],
+            [0,1,1,0,1,1,0],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [0,1,1,0,1,1,0],
+            [0,0,1,1,1,0,0]
+        ],//0
+        [
+            [0,0,0,1,1,0,0],
+            [0,1,1,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [1,1,1,1,1,1,1]
+        ],//1
+        [
+            [0,1,1,1,1,1,0],
+            [1,1,0,0,0,1,1],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,1,1,0],
+            [0,0,0,1,1,0,0],
+            [0,0,1,1,0,0,0],
+            [0,1,1,0,0,0,0],
+            [1,1,0,0,0,0,0],
+            [1,1,0,0,0,1,1],
+            [1,1,1,1,1,1,1]
+        ],//2
+        [
+            [1,1,1,1,1,1,1],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,1,1,0],
+            [0,0,0,1,1,0,0],
+            [0,0,1,1,1,0,0],
+            [0,0,0,0,1,1,0],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [0,1,1,1,1,1,0]
+        ],//3
+        [
+            [0,0,0,0,1,1,0],
+            [0,0,0,1,1,1,0],
+            [0,0,1,1,1,1,0],
+            [0,1,1,0,1,1,0],
+            [1,1,0,0,1,1,0],
+            [1,1,1,1,1,1,1],
+            [0,0,0,0,1,1,0],
+            [0,0,0,0,1,1,0],
+            [0,0,0,0,1,1,0],
+            [0,0,0,1,1,1,1]
+        ],//4
+        [
+            [1,1,1,1,1,1,1],
+            [1,1,0,0,0,0,0],
+            [1,1,0,0,0,0,0],
+            [1,1,1,1,1,1,0],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [0,1,1,1,1,1,0]
+        ],//5
+        [
+            [0,0,0,0,1,1,0],
+            [0,0,1,1,0,0,0],
+            [0,1,1,0,0,0,0],
+            [1,1,0,0,0,0,0],
+            [1,1,0,1,1,1,0],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [0,1,1,1,1,1,0]
+        ],//6
+        [
+            [1,1,1,1,1,1,1],
+            [1,1,0,0,0,1,1],
+            [0,0,0,0,1,1,0],
+            [0,0,0,0,1,1,0],
+            [0,0,0,1,1,0,0],
+            [0,0,0,1,1,0,0],
+            [0,0,1,1,0,0,0],
+            [0,0,1,1,0,0,0],
+            [0,0,1,1,0,0,0],
+            [0,0,1,1,0,0,0]
+        ],//7
+        [
+            [0,1,1,1,1,1,0],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [0,1,1,1,1,1,0],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [0,1,1,1,1,1,0]
+        ],//8
+        [
+            [0,1,1,1,1,1,0],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [1,1,0,0,0,1,1],
+            [0,1,1,1,0,1,1],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,1,1,0],
+            [0,0,0,1,1,0,0],
+            [0,1,1,0,0,0,0]
+        ],//9
+        [
+            [0,0,0,0,0,0,0],
+            [0,0,1,1,1,0,0],
+            [0,0,1,1,1,0,0],
+            [0,0,1,1,1,0,0],
+            [0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0],
+            [0,0,1,1,1,0,0],
+            [0,0,1,1,1,0,0],
+            [0,0,1,1,1,0,0],
+            [0,0,0,0,0,0,0]
+        ]//:
+    ];
+
+var canvas = document.getElementById('canvas');
+
+if(canvas.getContext){
+    var cxt = canvas.getContext('2d');
+    //声明canvas的宽高
+    var H = 100,W = 700;
+    canvas.height = H;
+    canvas.width = W;
+    cxt.fillStyle = '#f00';
+    cxt.fillRect(10,10,50,50);
+
+    //存储时间数据
+    var data = [];
+    //存储运动的小球
+    var balls = [];
+    //设置粒子半径
+    var R = canvas.height/20-1;
+    (function(){
+        var temp = /(\d)(\d):(\d)(\d):(\d)(\d)/.exec(new Date());
+        //存储时间数字，由十位小时、个位小时、冒号、十位分钟、个位分钟、冒号、十位秒钟、个位秒钟这7个数字组成
+        data.push(temp[1],temp[2],10,temp[3],temp[4],10,temp[5],temp[6]);
+    })();
+
+    /*生成点阵数字*/
+    function renderDigit(index,num){
+        for(var i = 0; i < digit[num].length; i++){
+            for(var j = 0; j < digit[num][i].length; j++){
+                if(digit[num][i][j] == 1){
+                    cxt.beginPath();
+                    cxt.arc(14*(R+2)*index + j*2*(R+1)+(R+1),i*2*(R+1)+(R+1),R,0,2*Math.PI);
+                    cxt.closePath();
+                    cxt.fill();
+                }
+            }
+        }
+    }
+
+    /*更新时钟*/
+    function updateDigitTime(){
+        var changeNumArray = [];
+        var temp = /(\d)(\d):(\d)(\d):(\d)(\d)/.exec(new Date());
+        var NewData = [];
+        NewData.push(temp[1],temp[2],10,temp[3],temp[4],10,temp[5],temp[6]);
+        for(var i = data.length-1; i >=0 ; i--){
+            //时间发生变化
+            if(NewData[i] !== data[i]){
+                //将变化的数字值和在data数组中的索引存储在changeNumArray数组中
+                changeNumArray.push(i+'_'+(Number(data[i])+1)%10);
+            }
+        }
+        //增加小球
+        for(var i = 0; i< changeNumArray.length; i++){
+            addBalls.apply(this,changeNumArray[i].split('_'));
+        }
+        data = NewData.concat();
+    }
+
+    /*更新小球状态*/
+    function updateBalls(){
+        for(var i = 0; i < balls.length; i++){
+            balls[i].stepY += balls[i].disY;
+            balls[i].x += balls[i].stepX;
+            balls[i].y += balls[i].stepY;
+            if(balls[i].x > W + R || balls[i].y > H + R){
+                balls.splice(i,1);
+                i--;
+            }
+        }
+    }
+
+    /*增加要运动的小球*/
+    function addBalls(index,num){
+        var numArray = [1,2,3];
+        var colorArray =  ["#3BE","#09C","#A6C","#93C","#9C0","#690","#FB3","#F80","#F44","#C00"];
+        for(var i = 0; i < digit[num].length; i++){
+            for(var j = 0; j < digit[num][i].length; j++){
+                if(digit[num][i][j] == 1){
+                    var ball = {
+                        x:14*(R+2)*index + j*2*(R+1)+(R+1),
+                        y:i*2*(R+1)+(R+1),
+                        stepX:Math.floor(Math.random() * 4 -2),
+                        stepY:-2*numArray[Math.floor(Math.random()*numArray.length)],
+                        color:colorArray[Math.floor(Math.random()*colorArray.length)],
+                        disY:1
+                    };
+                    balls.push(ball);
+                }
+            }
+        }
+    }
+
+    /*渲染*/
+    function render(){
+        //重置画布宽度，达到清空画布的效果
+        canvas.height = 100;
+        //渲染时钟
+        for(var i = 0; i < data.length; i++){
+            renderDigit(i,data[i]);
+        }
+        //渲染小球
+        for(var i = 0; i < balls.length; i++){
+            cxt.beginPath();
+            cxt.arc(balls[i].x,balls[i].y,R,0,2*Math.PI);
+            cxt.fillStyle = balls[i].color;
+            cxt.closePath();
+            cxt.fill();
+        }
+    }
+
+    clearInterval(oTimer);
+    var oTimer = setInterval(function(){
+        //更新时钟
+        updateDigitTime();
+        //更新小球状态
+        updateBalls();
+        //渲染
+        render();
+    },50);
+}
+
+})();
+</script>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-eye"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jiyang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">99k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:30</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener external nofollow noreferrer" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'owd5pfJvVjoBkwE0F3w7Oqc5-gzGzoHsz',
+      appKey     : 'pQbK5JId2AmEfxG3oSiFXAFP',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+<div class="moon-menu">
+  <div class="moon-menu-items">
+    
+    <div class="moon-menu-item" onclick="back2bottom()">
+      <svg aria-hidden="true" focusable="false" data-prefix="fa" data-icon="chevron-down" class="svg-inline--fa fa-chevron-down fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M207.029 381.476L12.686 187.132c-9.373-9.373-9.373-24.569 0-33.941l22.667-22.667c9.357-9.357 24.522-9.375 33.901-.04L224 284.505l154.745-154.021c9.379-9.335 24.544-9.317 33.901.04l22.667 22.667c9.373 9.373 9.373 24.569 0 33.941L240.971 381.476c-9.373 9.372-24.569 9.372-33.942 0z"></path></svg>    </div>
+    
+    <div class="moon-menu-item" onclick="back2top()">
+      <svg aria-hidden="true" focusable="false" data-prefix="fa" data-icon="chevron-up" class="svg-inline--fa fa-chevron-up fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M240.971 130.524l194.343 194.343c9.373 9.373 9.373 24.569 0 33.941l-22.667 22.667c-9.357 9.357-24.522 9.375-33.901.04L224 227.495 69.255 381.516c-9.379 9.335-24.544 9.317-33.901-.04l-22.667-22.667c-9.373-9.373-9.373-24.569 0-33.941L207.03 130.525c9.372-9.373 24.568-9.373 33.941-.001z"></path></svg>    </div>
+    
+  </div>
+  <div class="moon-menu-button" onclick="moonMenuClick()">
+    <svg class="moon-menu-svg">
+      <circle class="moon-menu-cricle" cx="50%" cy="50%" r="44%"></circle>
+      <circle class="moon-menu-border" cx="50%" cy="50%" r="48%"></circle>
+      <g class="moon-menu-points">
+        <circle class="moon-menu-point" r=".2rem" cx="0" cy="-.8rem"></circle>
+        <circle class="moon-menu-point" r=".2rem"></circle>
+        <circle class="moon-menu-point" r=".2rem" cx="0" cy=".8rem"></circle>
+      </g>
+    </svg>
+    <div class="moon-menu-icon">
+    </div>
+    <div class="moon-menu-text">
+    </div>
+  </div>
+</div>
+<script src="/js/injector.js"></script>
+</body>
+</html>

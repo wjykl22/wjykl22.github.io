@@ -575,13 +575,13 @@ p(\mathcal{S}) \propto \exp (-\beta \cdot \operatorname{cost}(\mathcal{S}))
       </categories>
       <tags>
         <tag>分布式机器学习</tag>
+        <tag>通信优化</tag>
+        <tag>梯度压缩</tag>
         <tag>科研</tag>
         <tag>同步并行（SGD）</tag>
         <tag>异步并行（ASGD）</tag>
         <tag>加速比分析</tag>
         <tag>Ray</tag>
-        <tag>通信优化</tag>
-        <tag>梯度压缩</tag>
         <tag>小组汇报</tag>
       </tags>
   </entry>
@@ -1033,9 +1033,9 @@ C_{n a t}(t):=\left\{\begin{array}{ll}
       </categories>
       <tags>
         <tag>分布式机器学习</tag>
-        <tag>科研</tag>
         <tag>通信优化</tag>
         <tag>梯度压缩</tag>
+        <tag>科研</tag>
       </tags>
   </entry>
   <entry>

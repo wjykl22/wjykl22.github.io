@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://wjykl22.github.io/"/>
-  <updated>2020-10-07T11:59:42.940Z</updated>
+  <updated>2020-10-11T05:46:29.198Z</updated>
   <id>https://wjykl22.github.io/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://wjykl22.github.io/archives/5c29dc6b.html"/>
     <id>https://wjykl22.github.io/archives/5c29dc6b.html</id>
     <published>2020-10-07T02:33:24.000Z</published>
-    <updated>2020-10-07T11:59:42.940Z</updated>
+    <updated>2020-10-11T05:46:29.198Z</updated>
     
     <summary type="html">
     
@@ -48,11 +48,11 @@
     
       <category term="分布式机器学习" scheme="https://wjykl22.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
     
+      <category term="科研" scheme="https://wjykl22.github.io/tags/%E7%A7%91%E7%A0%94/"/>
+    
       <category term="数据并行" scheme="https://wjykl22.github.io/tags/%E6%95%B0%E6%8D%AE%E5%B9%B6%E8%A1%8C/"/>
     
       <category term="模型并行" scheme="https://wjykl22.github.io/tags/%E6%A8%A1%E5%9E%8B%E5%B9%B6%E8%A1%8C/"/>
-    
-      <category term="科研" scheme="https://wjykl22.github.io/tags/%E7%A7%91%E7%A0%94/"/>
     
   </entry>
   
@@ -99,7 +99,7 @@
     <link href="https://wjykl22.github.io/archives/40cbe9ff.html"/>
     <id>https://wjykl22.github.io/archives/40cbe9ff.html</id>
     <published>2020-09-10T06:27:49.000Z</published>
-    <updated>2020-09-11T02:50:47.502Z</updated>
+    <updated>2020-10-09T01:16:04.130Z</updated>
     
     <summary type="html">
     
@@ -108,7 +108,7 @@
         
         
           &lt;ul&gt;
-&lt;li&gt;&lt;p&gt;题目：使用强化学习进行设备配置&lt;/p&gt;
+&lt;li&gt;&lt;p&gt;题目：使用强化学习方法进行设备Placement&lt;/p&gt;
 &lt;p&gt;英文：&lt;a href=&quot;https://arxiv.org/abs/1706.04972&quot; target=&quot;_blank&quot; rel=&quot;noopener external nofollow
         
       
@@ -125,11 +125,11 @@
     
       <category term="分布式机器学习" scheme="https://wjykl22.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
     
+      <category term="科研" scheme="https://wjykl22.github.io/tags/%E7%A7%91%E7%A0%94/"/>
+    
       <category term="数据并行" scheme="https://wjykl22.github.io/tags/%E6%95%B0%E6%8D%AE%E5%B9%B6%E8%A1%8C/"/>
     
       <category term="模型并行" scheme="https://wjykl22.github.io/tags/%E6%A8%A1%E5%9E%8B%E5%B9%B6%E8%A1%8C/"/>
-    
-      <category term="科研" scheme="https://wjykl22.github.io/tags/%E7%A7%91%E7%A0%94/"/>
     
       <category term="自动化并行策略" scheme="https://wjykl22.github.io/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E5%B9%B6%E8%A1%8C%E7%AD%96%E7%95%A5/"/>
     
@@ -140,7 +140,7 @@
     <link href="https://wjykl22.github.io/archives/60fdd68b.html"/>
     <id>https://wjykl22.github.io/archives/60fdd68b.html</id>
     <published>2020-09-10T01:17:43.000Z</published>
-    <updated>2020-09-11T02:50:47.496Z</updated>
+    <updated>2020-10-07T02:33:31.082Z</updated>
     
     <summary type="html">
     
@@ -188,11 +188,11 @@
     
       <category term="分布式机器学习" scheme="https://wjykl22.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
     
+      <category term="科研" scheme="https://wjykl22.github.io/tags/%E7%A7%91%E7%A0%94/"/>
+    
       <category term="数据并行" scheme="https://wjykl22.github.io/tags/%E6%95%B0%E6%8D%AE%E5%B9%B6%E8%A1%8C/"/>
     
       <category term="模型并行" scheme="https://wjykl22.github.io/tags/%E6%A8%A1%E5%9E%8B%E5%B9%B6%E8%A1%8C/"/>
-    
-      <category term="科研" scheme="https://wjykl22.github.io/tags/%E7%A7%91%E7%A0%94/"/>
     
   </entry>
   
@@ -240,7 +240,7 @@
     <link href="https://wjykl22.github.io/archives/5cf57987.html"/>
     <id>https://wjykl22.github.io/archives/5cf57987.html</id>
     <published>2020-08-26T06:13:54.000Z</published>
-    <updated>2020-08-28T11:30:10.385Z</updated>
+    <updated>2020-10-11T05:46:09.505Z</updated>
     
     <summary type="html">
     
@@ -564,7 +564,7 @@
     <link href="https://wjykl22.github.io/archives/88211b35.html"/>
     <id>https://wjykl22.github.io/archives/88211b35.html</id>
     <published>2020-07-31T08:03:49.000Z</published>
-    <updated>2020-09-24T13:40:43.377Z</updated>
+    <updated>2020-10-11T05:53:54.336Z</updated>
     
     <summary type="html">
     
@@ -595,7 +595,7 @@
     <link href="https://wjykl22.github.io/archives/1b1e994e.html"/>
     <id>https://wjykl22.github.io/archives/1b1e994e.html</id>
     <published>2020-07-31T06:45:54.000Z</published>
-    <updated>2020-07-31T08:02:49.849Z</updated>
+    <updated>2020-10-11T05:45:55.833Z</updated>
     
     <summary type="html">
     
@@ -632,7 +632,7 @@
     <link href="https://wjykl22.github.io/archives/2932556.html"/>
     <id>https://wjykl22.github.io/archives/2932556.html</id>
     <published>2020-07-29T06:30:28.000Z</published>
-    <updated>2020-07-31T13:08:17.954Z</updated>
+    <updated>2020-10-11T05:45:32.289Z</updated>
     
     <summary type="html">
     
@@ -670,7 +670,7 @@
     <link href="https://wjykl22.github.io/archives/fcc7e450.html"/>
     <id>https://wjykl22.github.io/archives/fcc7e450.html</id>
     <published>2020-07-28T06:55:28.000Z</published>
-    <updated>2020-07-28T11:37:43.444Z</updated>
+    <updated>2020-10-11T05:45:42.273Z</updated>
     
     <summary type="html">
     
@@ -707,7 +707,7 @@
     <link href="https://wjykl22.github.io/archives/d06ef2e3.html"/>
     <id>https://wjykl22.github.io/archives/d06ef2e3.html</id>
     <published>2020-07-28T01:06:20.000Z</published>
-    <updated>2020-07-29T12:47:10.033Z</updated>
+    <updated>2020-10-11T05:45:49.168Z</updated>
     
     <summary type="html">
     
@@ -744,7 +744,7 @@
     <link href="https://wjykl22.github.io/archives/487a2936.html"/>
     <id>https://wjykl22.github.io/archives/487a2936.html</id>
     <published>2020-07-27T12:39:49.000Z</published>
-    <updated>2020-07-28T13:11:16.435Z</updated>
+    <updated>2020-10-11T05:45:27.323Z</updated>
     
     <summary type="html">
     

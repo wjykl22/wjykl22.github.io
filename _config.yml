@@ -146,3 +146,15 @@ sitemap:
 # 百度站点地图
 baidusitemap:
   path: baidusitemap.xml
+
+
+# index2 generator是否包含官方的hexo-generator-index，默认true（包含）
+index2_include_index: true # defult is true
+
+# 配置index2 generator，可以是数组或对象
+index2_generator:
+  per_page: 2
+  order_by: -date
+  include:
+    - category 公务员考试 # 只包含Web分类下的文章
+  exclude:

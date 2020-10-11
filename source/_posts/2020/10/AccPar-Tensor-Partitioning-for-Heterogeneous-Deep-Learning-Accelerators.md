@@ -1,7 +1,6 @@
 ---
 title: 'AccPar: Tensor Partitioning for Heterogeneous Deep Learning Accelerators'
 mathjax: true
-date: 2020-10-07 10:33:24
 tags:
   - 分布式机器学习
   - 数据并行
@@ -11,6 +10,8 @@ categories:
   - 科研
   - 分布式机器学习
   - 论文阅读笔记
+abbrlink: 5c29dc6b
+date: 2020-10-07 10:33:24
 ---
 
 ## AccPar：针对异构深度学习加速器的张量划分方法

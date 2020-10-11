@@ -22,7 +22,7 @@ encrypt: # hexo-blog-encrypt
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://www.wjykl.top/
+url: https://wjykl22.github.io/
 root: /
 permalink: archives/:abbrlink.html
 abbrlink :

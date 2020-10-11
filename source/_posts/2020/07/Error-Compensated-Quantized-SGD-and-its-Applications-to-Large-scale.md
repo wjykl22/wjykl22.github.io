@@ -3,7 +3,6 @@ title: Error Compensated Quantized SGD and its Applications to Large-scale
 mathjax: true
 abbrlink: fcc7e450
 date: 2020-07-28 14:55:28
-top: 5
 tags:
 	- 分布式机器学习
 	- 通信优化

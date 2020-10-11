@@ -3,7 +3,6 @@ title: Kong和Keycloak第三方认证和权限管理
 mathjax: true
 abbrlink: fbb6b1b9
 date: 2020-07-27 10:48:15
-top: 1
 tags:
 	- Kong
 	- keycloak

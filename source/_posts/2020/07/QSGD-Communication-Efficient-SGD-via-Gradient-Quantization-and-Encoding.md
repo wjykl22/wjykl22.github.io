@@ -3,7 +3,6 @@ title: QSGD Communication-Efficient SGD via Gradient Quantization and Encoding
 mathjax: true
 abbrlink: d06ef2e3
 date: 2020-07-28 09:06:20
-top: 4
 tags:
 	- 分布式机器学习
 	- 通信优化

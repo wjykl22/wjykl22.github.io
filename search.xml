@@ -1,6 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>言语理解与表达（一）——中心理解</title>
+    <url>/archives/72a65002.html</url>
+    <content><![CDATA[<h2 id="言语理解与表达一中心理解题">言语理解与表达（一）——中心理解题</h2>
+<table>
+<thead>
+<tr class="header">
+<th>序列</th>
+<th>主要内容</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>中心理解（转折关系、主题词、因果关系）</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>中心理解（必要条件、程度词、并列关系）</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>中心理解（行文脉络）、细节判断</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>语句表达（语句排序、语句填空题）</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>语句表达（接语选择题）、逻辑填空（词的辨析、转折关系、递进关系）</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>逻辑填空（并列关系、解释类对应、重点词句对应）</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>判断阅读
+<ul>
+<li>中心理解题</li>
+<li>细节判断</li>
+</ul></li>
+<li>语句表达
+<ul>
+<li>语句排序</li>
+<li>词句填空</li>
+<li>接语选择</li>
+</ul></li>
+<li>逻辑填空
+<ul>
+<li>实词填空</li>
+<li>成语填空</li>
+<li>混搭填空</li>
+</ul></li>
+</ul>
+<h3 id="学习重点">学习重点</h3>
+<ol type="1">
+<li><code>转折</code>、<code>因果</code>关联词和重点位置</li>
+<li><code>主题词</code>的特征</li>
+<li>中心理解题<code>错误选项</code>特征</li>
+<li>中心理解题<code>过渡</code>句子特征</li>
+</ol>
+<blockquote>
+<p>解题顺序：提问——文段——选项</p>
+</blockquote>
+<h3 id="第一节-中心理解题重中之重">第一节 中心理解题（重中之重）</h3>
+<ul>
+<li><code>提问方式</code>：这段文字主要/旨在/重在/意在说明（强调/论述）的是......这段文字的主旨/主题/观点是......对这段文字概括最恰当的是......</li>
+<li><code>解题思路</code>：寻找中心句
+<ol type="1">
+<li>有中心句——同义替换（很少有一模一样的）</li>
+<li>无中心句——全面概括</li>
+</ol></li>
+<li><code>解题技巧</code>：以下两点都要抓
+<ol type="1">
+<li>重点词语：关联词、主题词、程度词</li>
+<li>行文脉络：写作的思路和文章结构（中心句和分述句）</li>
+</ol></li>
+</ul>
+<h4 id="关联词">关联词</h4>
+<h5 id="转折关系">转折关系</h5>
+<p>虽然A...但是B、尽管...可是...、...不过...、然而....和其实/事实上/实际上。</p>
+<p>转折之后是重点，在做题目的时候注意错误选项的错误类型。</p>
+<blockquote>
+<p>可用<code>逆向思维</code>解题：转折前后意思相反，适用文段特征：很多人都认为、大多数人认为、不少人认为、传统观点认为+转折</p>
+</blockquote>
+<ul>
+<li>错误特征：
+<ul>
+<li>转折前的内容</li>
+<li>例子、原因和背景</li>
+<li>无中生有</li>
+<li>绝对表述</li>
+<li>与文意相悖</li>
+</ul></li>
+<li><code>略读</code>句子的特征：
+<ol type="1">
+<li>例子：比如、例如</li>
+<li>原因：因为、由于、：、——</li>
+<li>背景：近年来，随着</li>
+</ol></li>
+</ul>
+<h5 id="主题词辅助技巧">主题词（辅助技巧）</h5>
+<p>文段一般绕其展开、一般高频出现（有可能以指代词出现 ）、多为名词、前有引用后有说明</p>
+<p>需要注意干扰选项——范围扩大/缩小/偷换</p>
+<h5 id="因果关系">因果关系</h5>
+<ul>
+<li>典型格式：因为...所以...、由于...因此...</li>
+<li>理论要点：结论是重点</li>
+</ul>
+]]></content>
+      <categories>
+        <category>公务员考试</category>
+        <category>言语理解与表达</category>
+      </categories>
+      <tags>
+        <tag>国考</tag>
+        <tag>行测</tag>
+        <tag>言语理解</tag>
+        <tag>中心理解</tag>
+        <tag>转折</tag>
+        <tag>因果</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>AccPar: Tensor Partitioning for Heterogeneous Deep Learning Accelerators</title>
     <url>/archives/5c29dc6b.html</url>
     <content><![CDATA[<h2 id="accpar针对异构深度学习加速器的张量划分方法">AccPar：针对异构深度学习加速器的张量划分方法</h2>

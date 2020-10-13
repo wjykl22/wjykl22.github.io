@@ -22,7 +22,7 @@ encrypt: # hexo-blog-encrypt
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: https://wjykl22.github.io/
+url: https://www.wjykl.top/
 root: /
 permalink: archives/:abbrlink.html
 abbrlink :
@@ -111,9 +111,10 @@ theme: next
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
-  type: git
+- type: git
   repo: https://github.com/wjykl22/wjykl22.github.io
   branch: master
+- type: baidu_url_submitter
 
 # 本地搜索
 search:
@@ -158,3 +159,13 @@ index2_generator:
   include:
     - category 公务员考试 # 只包含Web分类下的文章
   exclude:
+
+baidu_url_submit:
+  count: 100 ## 比如3，代表提交最新的三个链接
+  host: https://www.wjykl.top ## 在百度站长平台中注册的域名
+  token: l3bNpE3LQon6l2IT ## 请注意这是您的秘钥， 请不要发布在公众仓库里!
+  path: baidu_urls.txt ## 文本文档的地址， 新链接会保存在此文本文档里
+
+
+# Deployment
+## Docs: https://hexo.io/docs/deployment.html

@@ -1,4 +1,4 @@
-# Hexo Configuration
+﻿# Hexo Configuration
 ## Docs: https://hexo.io/docs/configuration.html
 ## Source: https://github.com/hexojs/hexo/
 
@@ -111,9 +111,6 @@ theme: next
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
-- type: git
-  repo: https://github.com/wjykl22/wjykl22.github.io
-  branch: master
 - type: baidu_url_submitter
 
 # 本地搜索

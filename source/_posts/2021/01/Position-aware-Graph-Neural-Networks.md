@@ -57,7 +57,7 @@ P-GNN的架构图。P-GNN首先采样多个不同尺寸的锚点集合$S=\left\{
 
 图$G=(\mathcal{V}, \mathcal{E})$；其中$S$集合表示$k$个锚集${S_i}$；节点输入特征为${x_v}$；消息计算函数的输出是一个$r$维的中间消息；消息聚合函数是$AGG_M$和$AGG_S$；可训练向量$\mathbf{w} \in \mathbb{R}^{r}$和非线性变换$\sigma$；网络层$l \in[1, L]$
 
-<img src="Position-aware-Graph-Neural-Networks/image-20210107164547880.png" alt="image-20210107164547880" style="zoom: 80%;" />
+<img src="Position-aware-Graph-Neural-Networks/image-20210107165920868.png" alt="image-20210107165920868" style="zoom:80%;" />
 
 ### 锚集的选择
 

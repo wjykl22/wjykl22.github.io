@@ -151,7 +151,7 @@ $$
 
 ##### Type-3：划分$\mathbf{D}_{o,l}$维度
 
-在后传：Backward的过程中产生层内（intra-layer）通信
+在后传：Backward的过程中产生层内（intra-layer）通信	
 $$
 \begin{aligned}
 \mathbf{E}_{l}[b, q i] &=\sum_{q o \in\left\{1, \cdots, \alpha D_{o, l}\right\}} \mathbf{E}_{l+1}[b, q o] \times \mathbf{W}_{l}^{\top}[q o, q i] \\
